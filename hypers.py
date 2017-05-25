@@ -36,22 +36,15 @@ class HyperPrior():
         
 # Bayesian Variable class that uses hyperpriors instead of probability    
 class PredictionNode():
-    
-    #def __init__(self, values = ["True", "False"], parentValues = []):
-        
-    #    self.lookup_table = parentValues
-    #    self.hyperprior_table = list()
-        
-    #    for _ in parentValues:
-    #        self.hyperprior_table.append(HyperPrior(values))
-            
-    def __init__(self, values = ["True", "False"], parentValues = []):
-        
-        self.lookup_table = list()
-        self.hyperprior_table = list()
-        
+           
+    # Save names and create probability table
+    def __init__(self, names, values = ["True", "False"], parentValues = []):
+        self.names = names
+        self.prob_table = dict()
         self.createPriors(values, parentValues, [0 for _ in range(len(parentValues))], len(parentValues)-1)
-            
+    
+
+    # Recursively creates hyperpriors for the variable      
     def createPriors(self, values, parentValues, indices, pointer):
     
         if pointer < 0:
@@ -59,29 +52,26 @@ class PredictionNode():
             vals = list()
             for i, index in enumerate(indices):
                 vals.append(parentValues[i][index])
-                
-            self.lookup_table.append(vals)
-            
-            self.hyperprior_table.append(HyperPrior(values))
+            self.prob_table[str(vals)] = HyperPrior(values)
             
         else:
             for i in range(len(parentValues[pointer])):
                 indices[pointer] = i
                 self.createPriors(values, parentValues, indices, pointer - 1)
     
+
     # Return probability of a given value and parentValues
     # Parent values is empty by default for variables without parents
     def getProbability(self, value, parentValues = []):
-        index = self.lookup_table.index(parentValues)
-        
-        return self.hyperprior_table[index].getProbability(value)
+        hyperprior = self.prob_table[str(parentValues)]
+        return hyperprior.getProbability(value)
+
 
     # Return probabilities given parentValues
     # Parent values is empty by default for variables without parents        
     def getProbabilities(self, parentValues = []):
-        index = self.lookup_table.index(parentValues)
-        
-        return self.hyperprior_table[index].getProbabilities()
+        hyperprior = self.prob_table[str(parentValues)]
+        return hyperprior.getProbabilities()
     
     # Returns the whole probability table as a tuple of two lists
     # the first list contains labels, the second probabilities  
@@ -90,12 +80,13 @@ class PredictionNode():
         labels = list()
         probas = list()
         
-        for parentVals in self.lookup_table:
+        for parentVals in self.prob_table.keys():
             (vals, probs) = self.getProbabilities(parentVals)
             
             for val, prob in zip(vals, probs):
             
-                labels.append([val] + parentVals)
+                parentList = [x.strip() for x in parentVals.split("'") if len(x.strip()) > 1]
+                labels.append([val] + parentList)
                 probas.append(prob)
             
         return (labels, probas)
