@@ -4,13 +4,14 @@ import random as r
 
 # Class that makes a random probability distribution given a node and its required parents.
 class RandomTable():
-    def __init__(self, values):
+    def __init__(self, values, diff):
         self.values = values
+        self.diff = diff
         
         # Create baseline for all values, and then normalize
         self.params = list()
         for param in range(len(values)):
-            self.params.append(r.uniform(0,1))
+            self.params.append(diff+r.uniform(0,1))
         paramSum = sum(self.params)
         self.params = [i/paramSum for i in self.params]
         
@@ -33,10 +34,11 @@ class RandomTable():
 class RandomNode():
            
     # Save names and create probability table
-    def __init__(self, names, values = ["True", "False"], parentValues = []):
+    def __init__(self, names, values = ["True", "False"], parentValues = [], diff=0):
         self.names = names
         self.prob_table = dict()
         self.createValues(values, parentValues, [0 for _ in range(len(parentValues))], len(parentValues)-1)
+        selfdiff = diff
     
     # Recursively creates hyperpriors for the variable      
     def createValues(self, values, parentValues, indices, pointer):
@@ -46,7 +48,7 @@ class RandomNode():
             vals = list()
             for i, index in enumerate(indices):
                 vals.append(parentValues[i][index])
-            self.prob_table[str(vals)] = RandomTable(values)
+            self.prob_table[str(vals)] = RandomTable(values, self.diff)
             
         else:
             for i in range(len(parentValues[pointer])):
