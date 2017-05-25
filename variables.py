@@ -71,8 +71,9 @@ class HyperPrior():
 class Variable():
            
     # Save names and create probability table
-    def __init__(self, names, values = ["True", "False"], parentValues = []):
+    def __init__(self, names, values = ["True", "False"], parentValues = [], diff = 0):
         self.names = names
+        self.diff = diff
         self.prob_table = dict()
         self.createValues(values, parentValues, [0 for _ in range(len(parentValues))], len(parentValues)-1)
     
@@ -84,7 +85,7 @@ class Variable():
             vals = list()
             for i, index in enumerate(indices):
                 vals.append(parentValues[i][index])
-            self.prob_table[str(vals)] = RandomTable(values)
+            self.prob_table[str(vals)] = RandomTable(values, self.diff)
             
         else:
             for i in range(len(parentValues[pointer])):
