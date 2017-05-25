@@ -158,5 +158,11 @@ class HyperpriorVariable(Variable):
             for i in range(len(parentValues[pointer])):
                 indices[pointer] = i
                 self.createPriors(values, parentValues, indices, pointer - 1)
+
+
+    # Update specific hyperprior
+    def updateHyperprior(self, values, parentValues=[]):
+        hyperprior = self.prob_table[str(parentValues)]
+        hyperprior.updateParams(values)
         
         

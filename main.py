@@ -8,16 +8,18 @@ def printVar(var):
         print foo[i], bar[i]
     print ""
 
-var = HyperpriorVariable(names = ["Coin Outcome", "Fairness", "Brightness", "Person"],values=["Heads", "Tails"] ,
-                 parentValues =[["Fair", "Unfair"], ["Dark", "Light"], ["Wouter", "Erwin"]]) 
+#var = HyperpriorVariable(names = ["Coin Outcome", "Fairness", "Brightness", "Person"],values=["Heads", "Tails"] ,
+#                 parentValues =[["Fair", "Unfair"], ["Dark", "Light"], ["Wouter", "Erwin"]]) 
 
 
 
-#var = HyperpriorVariable(names = ["Coin Outcome", "Fairness"],values=["Heads", "Tails"] ,
-#                 parentValues =[["Fair", "Unfair"]]) 
+var = HyperpriorVariable(names = ["Coin Outcome", "Fairness"],values=["Heads", "Tails"] ,
+                 parentValues =[["Fair", "Unfair"]]) 
 
-#var2 = Variable(names = ["Fairness"], values=["Fair", "Unfair"], parentValues=[])
+var.updateHyperprior([3.0, 0], ["Unfair"])
 
+var2 = Variable(names = ["Fairness"], values=["Fair", "Unfair"], parentValues=[])
+
+printVar(var2)
 printVar(var)
-#printVar(var2)
 

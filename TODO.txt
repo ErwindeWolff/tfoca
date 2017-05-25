@@ -1,0 +1,11 @@
+- Create framework for fully worked out variable: i.e. fixed, complete probability table as argument.
+
+- Variable elimination:
+    - Gather factors
+    - Apply evidence to factors
+    - Multiply two factors
+    - Sum out factor
+
+- Random sampling approach to networks.
+
+- Figure out how to update hyperpriors (weighted influence)
