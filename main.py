@@ -11,4 +11,3 @@ print var.names[0] + " given " + str(var.names[1::]) + "\n"
 for i in range(len(foo)):
     print foo[i], bar[i]
 print ""
-

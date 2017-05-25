@@ -27,11 +27,12 @@ class HyperPrior():
             
         return (self.values, probs)
         
+    # Add the updates to the parameters
+    def updateParams(self, updates):
+        self.params = [x + y for x, y in zip(self.params, updates)]        
+
         
-        
-        
-        
-        
+      
         
         
 # Bayesian Variable class that uses hyperpriors instead of probability    
@@ -47,13 +48,19 @@ class PredictionNode():
     # Recursively creates hyperpriors for the variable      
     def createPriors(self, values, parentValues, indices, pointer):
     
+        # Basecase: traversed (backwards) through parentvalues
+        # Create a new hyperprior for this combination in the dictionary
         if pointer < 0:
         
             vals = list()
             for i, index in enumerate(indices):
                 vals.append(parentValues[i][index])
-            self.prob_table[str(vals)] = HyperPrior(values)
+            self.prob_table[str(vals)] = HyperPrior(values) # str() because lists cant be hashed
             
+        # Not all parents have an assigned value yet,
+        # recursively iterate to the next parents for all
+        # values of current selected parent (will thus go through all 
+        # complete permutations recursively)
         else:
             for i in range(len(parentValues[pointer])):
                 indices[pointer] = i
@@ -73,6 +80,7 @@ class PredictionNode():
         hyperprior = self.prob_table[str(parentValues)]
         return hyperprior.getProbabilities()
     
+
     # Returns the whole probability table as a tuple of two lists
     # the first list contains labels, the second probabilities  
     def getProbabilityTable(self):
@@ -84,15 +92,21 @@ class PredictionNode():
             (vals, probs) = self.getProbabilities(parentVals)
             
             for val, prob in zip(vals, probs):
-            
+                
+                # Turns list-string into a real list again
                 parentList = [x.strip() for x in parentVals.split("'") if len(x.strip()) > 1]
+                
                 labels.append([val] + parentList)
                 probas.append(prob)
             
         return (labels, probas)
         
+    # Function to update a specific hyperprior
+    def updateHyperprior(self, updates, parentVals=[]):
+        hyperprior = self.prob_table[str(parentVals)]
+        hyperprior.updateParams(updates)
         
-        
+
 
 
 
