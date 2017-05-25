@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu May 25 11:09:22 2017
-
-@author: Wouter
-"""
 
 import random as r
 
@@ -19,12 +14,12 @@ class RandomTable():
         paramSum = sum(self.params)
         self.params = [i/paramSum for i in self.params]
         
-    # 
+    # returns the probability of a given random value.
     def getProbability(self, value):
         index = self.values.index(value)
         return self.params[index]
         
-    # returns
+    # returns a list of probabilities for given random values in a tuple
     def getProbabilities(self):
         probs = list()
         
