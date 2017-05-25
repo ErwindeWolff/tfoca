@@ -4,13 +4,13 @@ import random as r
 
 # Class that makes a random probability distribution given a node and its required parents.
 class RandomTable():
-    def __init__(self, values):
+    def __init__(self, values, diff=0):
         self.values = values
         
         # Create baseline for all values, and then normalize
         self.params = list()
         for param in range(len(values)):
-            self.params.append(r.uniform(0,1))
+            self.params.append(diff + r.uniform(0,1))
         paramSum = sum(self.params)
         self.params = [i/paramSum for i in self.params]
         
