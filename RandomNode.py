@@ -37,8 +37,9 @@ class RandomNode():
     def __init__(self, names, values = ["True", "False"], parentValues = [], diff=0):
         self.names = names
         self.prob_table = dict()
+        self.diff = diff
         self.createValues(values, parentValues, [0 for _ in range(len(parentValues))], len(parentValues)-1)
-        selfdiff = diff
+        
     
     # Recursively creates hyperpriors for the variable      
     def createValues(self, values, parentValues, indices, pointer):
