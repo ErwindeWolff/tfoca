@@ -5,8 +5,10 @@ DONE:
 - Hyperpriors                                                                                               Erwin
 - Prediction Nodes                                                                                          Erwin
 - Random nodes                                                                                              Wouter
+
 - Sum out factor                                                                                            Erwin
 - Apply Evidence to Factor                                                                                  Erwin
+- Gather factors (with pruning)                                                                             Erwin
 
 
 TODO:
@@ -16,8 +18,9 @@ TODO:
 - Bayesian Network class                                                                                    (Wouter)
 
 - Variable elimination:
-    - Gather factors                                                                                        (Erwin)
     - Multiply two factors                                                                                  (Wouter)
+
+- Network GUI (because time to spare)                                                                       Erwin
 
 - Random sampling approach to networks.                                                                     Later
 

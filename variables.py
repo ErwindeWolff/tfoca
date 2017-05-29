@@ -73,6 +73,8 @@ class Variable():
     # Save names and create probability table
     def __init__(self, names, values = ["True", "False"], parentValues = [], diff = 0):
         self.names = names
+        self.values = values
+
         self.diff = diff
         self.value_row_table = list()
         self.prob_table = list()
@@ -99,7 +101,7 @@ class Variable():
         else:
             for value in parentValues[pointer]:
                 row_values[pointer] = value
-                self.createPriors(values, parentValues, row_values, pointer - 1)
+                self.createValues(values, parentValues, row_values, pointer - 1)
 
 
 
@@ -148,6 +150,8 @@ class HyperpriorVariable(Variable):
      # Save names and create probability table
     def __init__(self, names, values = ["True", "False"], parentValues = []):
         self.names = names
+        self.values = values
+
         self.value_row_table = list()
         self.prob_table = list()
         self.createPriors(values, parentValues, [parent[0] for parent in parentValues], len(parentValues)-1)
