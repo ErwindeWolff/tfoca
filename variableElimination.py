@@ -1,9 +1,5 @@
 from variables import *
 
-# Factor, triple with   f[0] = variable names
-#                       f[1] = variable & parent values
-#                       f[2] = probabilities
-
 def sumOut(factor, var):
     # Unpack factor
     (var_names, value_rows, prob_rows) = factor
@@ -47,34 +43,16 @@ def applyEvidence(factor, var, evidence_value):
     new_value_rows = list()
     new_prob_rows = list()
     
+    # Iterate through the complete table
     for value_row, prob_row in zip(value_rows, prob_rows):
+
+        # If the evidenced variable matches the evidence, save it
         if (value_row[index] == evidence_value):
             new_value_rows.append(value_row)
             new_prob_rows.append(prob_row)
 
     return (new_var_names, new_value_rows, new_prob_rows)
 
-
-var = HyperpriorVariable(names = ["Coin Outcome", "Fairness", "Brightness", "Person"], values=["Heads", "Tails"],
-                 parentValues = [["Fair", "Unfair"], ["Light", "Dark"], ["Erwin", "Wouter"]]) 
-
-f1 = var.getProbabilityTable()
-f1 = (var.names, f1[0], f1[1])
-f2 = applyEvidence(f1, "Brightness", "Light")
-f3 = sumOut(f2, "Fairness")
-
-
-def printFactor(f):
-
-    print f[0]
-    (foo, bar) = (f[1], f[2])
-    for i in range(len(foo)):
-        print foo[i], bar[i]
-    print ""
-
-printFactor(f1)
-printFactor(f2)
-printFactor(f3)
 
 
 

@@ -1,6 +1,7 @@
 from variables import *
+from variableElimination import * 
 
-
+# Function to print variable table
 def printVar(var):
     
     if (len(var.names) > 1):
@@ -13,18 +14,28 @@ def printVar(var):
         print foo[i], bar[i]
     print ""
 
-#var = HyperpriorVariable(names = ["Coin Outcome", "Fairness", "Brightness", "Person"],values=["Heads", "Tails"] ,
-#                 parentValues =[["Fair", "Unfair"], ["Dark", "Light"], ["Wouter", "Erwin"]]) 
+# Function to print factor
+def printFactor(f):
+
+    print f[0]
+    (foo, bar) = (f[1], f[2])
+    for i in range(len(foo)):
+        print foo[i], bar[i]
+    print ""
 
 
+# Bayesian Variable
+var = HyperpriorVariable(names = ["Coin Outcome", "Fairness", "Brightness", "Person"], values=["Heads", "Tails"],
+                 parentValues = [["Fair", "Unfair"], ["Light", "Dark"], ["Erwin", "Wouter"]]) 
 
-var = HyperpriorVariable(names = ["Coin Outcome", "Fairness"],values=["Heads", "Tails"] ,
-                 parentValues =[["Fair", "Unfair"]]) 
+# Factor, triple with   f[0] = variable names
+#                       f[1] = variable & parent values
+#                       f[2] = probabilities
+f1 = var.getProbabilityTable()
+f1 = (var.names, f1[0], f1[1])
+f2 = applyEvidence(f1, "Brightness", "Light")
+f3 = sumOut(f2, "Fairness")
 
-var.updateHyperprior([3.0, 0], ["Unfair"])
-
-var2 = Variable(names = ["Fairness"], values=["Fair", "Unfair"], parentValues=[])
-
-printVar(var2)
-printVar(var)
-
+printFactor(f1)
+printFactor(f2)
+printFactor(f3)
