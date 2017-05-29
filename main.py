@@ -2,7 +2,12 @@ from variables import *
 
 
 def printVar(var):
-    print var.names[0] + " given " + str(var.names[1::]) + "\n"
+    
+    if (len(var.names) > 1):
+        print var.names[0] + " given " + str(var.names[1::]) + "\n"
+    else:
+        print var.names[0]
+
     (foo, bar) = var.getProbabilityTable()
     for i in range(len(foo)):
         print foo[i], bar[i]

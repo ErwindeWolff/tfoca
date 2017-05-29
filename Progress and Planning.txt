@@ -1,0 +1,27 @@
+DONE:
+
+- Proposal                                                                                                  Together
+
+- Hyperpriors                                                                                               Erwin
+- Prediction Nodes                                                                                          Erwin
+- Random nodes                                                                                              Wouter
+- Sum out factor                                                                                            Erwin
+- Apply Evidence to Factor                                                                                  Erwin
+
+
+TODO:
+
+- Create framework for fully worked out variable: i.e. fixed, complete probability table as argument.       (Wouter)
+
+- Bayesian Network class                                                                                    (Wouter)
+
+- Variable elimination:
+    - Gather factors                                                                                        (Erwin)
+    - Multiply two factors                                                                                  (Wouter)
+
+- Random sampling approach to networks.                                                                     Later
+
+- Figure out how to update hyperpriors (weighted influence)                                                 Later
+
+
+

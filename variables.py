@@ -74,36 +74,52 @@ class Variable():
     def __init__(self, names, values = ["True", "False"], parentValues = [], diff = 0):
         self.names = names
         self.diff = diff
-        self.prob_table = dict()
+        self.value_row_table = list()
+        self.prob_table = list()
         self.createValues(values, parentValues, [0 for _ in range(len(parentValues))], len(parentValues)-1)
     
+
     # Recursively creates random probabilities for the variable      
-    def createValues(self, values, parentValues, indices, pointer):
+    def createValues(self, values, parentValues, row_values, pointer):
     
+        # Basecase: traversed (backwards) through parentvalues
+        # Create a new probability entry for this combination
         if pointer < 0:
-        
-            vals = list()
-            for i, index in enumerate(indices):
-                vals.append(parentValues[i][index])
-            self.prob_table[str(vals)] = RandomTable(values, self.diff)
+            # Copy because it is a pointer otherwise
+            vals = [value for value in row_values]
+
+            # Create this row
+            self.value_row_table.append(vals)
+            self.prob_table.append(RandomTable(values, self.diff))
             
+        # Not all parents have an assigned value yet,
+        # recursively iterate to the next parents for all
+        # values of current selected parent (will thus go through all 
+        # complete permutations recursively)
         else:
-            for i in range(len(parentValues[pointer])):
-                indices[pointer] = i
-                self.createValues(values, parentValues, indices, pointer - 1)
-    
+            for value in parentValues[pointer]:
+                row_values[pointer] = value
+                self.createPriors(values, parentValues, row_values, pointer - 1)
+
+
 
     # Return probability of a given value and parentValues
     # Parent values is empty by default for variables without parents
     def getProbability(self, value, parentValues = []):
-        table = self.prob_table[str(parentValues)]
+
+        index = self.value_row_table.index(parentValues)
+        table = self.prob_table[index]
+
         return table.getProbability(value)
 
 
     # Return probabilities given parentValues
     # Parent values is empty by default for variables without parents        
     def getProbabilities(self, parentValues = []):
-        table = self.prob_table[str(parentValues)]
+
+        index = self.value_row_table.index(parentValues)
+        table = self.prob_table[index]
+
         return table.getProbabilities()
     
     # Returns the whole probability table as a tuple of two lists
@@ -113,16 +129,12 @@ class Variable():
         labels = list()
         probas = list()
         
-        for parentVals in self.prob_table.keys():
+        for parentVals in self.value_row_table:
             (vals, probs) = self.getProbabilities(parentVals)
             
             for val, prob in zip(vals, probs):
-            
-                # Turns list-string into a real list again
-                parentList = parentVals.replace("[", "").replace("]", "")
-                parentList = [x.strip() for x in parentList.split("'") if len(x.strip()) > 1]
 
-                labels.append([val] + parentList)
+                labels.append([val] + parentVals)
                 probas.append(prob)
             
         return (labels, probas)
@@ -136,34 +148,41 @@ class HyperpriorVariable(Variable):
      # Save names and create probability table
     def __init__(self, names, values = ["True", "False"], parentValues = []):
         self.names = names
-        self.prob_table = dict()
-        self.createPriors(values, parentValues, [0 for _ in range(len(parentValues))], len(parentValues)-1)
+        self.value_row_table = list()
+        self.prob_table = list()
+        self.createPriors(values, parentValues, [parent[0] for parent in parentValues], len(parentValues)-1)
         
     # Recursively creates hyperpriors for the variable      
-    def createPriors(self, values, parentValues, indices, pointer):
+    def createPriors(self, values, parentValues, row_values, pointer):
     
         # Basecase: traversed (backwards) through parentvalues
-        # Create a new hyperprior for this combination in the dictionary
+        # Create a new hyperprior for this combination
         if pointer < 0:
-        
-            vals = list()
-            for i, index in enumerate(indices):
-                vals.append(parentValues[i][index])
-            self.prob_table[str(vals)] = HyperPrior(values) # str() because lists cant be hashed
+            # Copy because it is a pointer otherwise
+            vals = [value for value in row_values]
+
+            # Create this row
+            self.value_row_table.append(vals)
+            self.prob_table.append(HyperPrior(values))
             
         # Not all parents have an assigned value yet,
         # recursively iterate to the next parents for all
         # values of current selected parent (will thus go through all 
         # complete permutations recursively)
         else:
-            for i in range(len(parentValues[pointer])):
-                indices[pointer] = i
-                self.createPriors(values, parentValues, indices, pointer - 1)
+            for value in parentValues[pointer]:
+                row_values[pointer] = value
+                self.createPriors(values, parentValues, row_values, pointer - 1)
 
 
     # Update specific hyperprior
     def updateHyperprior(self, values, parentValues=[]):
-        hyperprior = self.prob_table[str(parentValues)]
+        index = self.value_row_table.index(parentValues)
+        hyperprior = self.prob_table[index]
         hyperprior.updateParams(values)
         
         
+
+
+
+
