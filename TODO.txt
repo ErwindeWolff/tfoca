@@ -9,3 +9,6 @@
 - Random sampling approach to networks.
 
 - Figure out how to update hyperpriors (weighted influence)
+
+
+
