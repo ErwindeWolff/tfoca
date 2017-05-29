@@ -2,9 +2,9 @@
 
 - Variable elimination:
     - Gather factors
-    - Apply evidence to factors
+    - Apply evidence to factors         DONE
     - Multiply two factors
-    - Sum out factor
+    - Sum out factor                    DONE
 
 - Random sampling approach to networks.
 
