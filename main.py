@@ -54,7 +54,7 @@ v3 = Variable(names = ["Brightness"], values=["Light", "Dark"], parentValues=[])
 v4 = Variable(names = ["Coin Outcome", "Fairness", "Brightness", "Person"], values=["Heads", "Tails"],
                  parentValues = [v2.values, v3.values, v1.values])
 
-factors = selectFactors( [v1, v2, v3, v4], ["Person"], [])
+factors = selectFactors( [v1, v2, v3, v4], ["Person","Coin Outcome"], [])
 
 for factor in factors:
     printFactor(factor)

@@ -53,7 +53,34 @@ def applyEvidence(factor, var, evidence_value):
 
     return (new_var_names, new_value_rows, new_prob_rows)
 
+def multiplyFactors(factor1, factor2):
+    (var_names1, value_rows1, prob_rows1) = factor1
+    (var_names2, value_rows2, prob_rows2) = factor2
+    
+    disjoint = bool(list(set(var_names1)&set(var_names2))==[])
+    new_var_names = [i for i in var_names1]
+    new_var_names.extend([i for i in var_names2 if i not in new_var_names])   
+    
+    new_value_rows = list()
+    new_prob_rows = list()
 
+    for i, value1 in enumerate(value_rows1):
+        for j, value2 in enumerate(value_rows2):
+            if disjoint:
+                new_value_row = list(value1)
+                new_value_row.extend(value2)
+                new_prob_row = prob_rows1[i]*prob_rows2[j]
+                new_value_rows.append(new_value_row)
+                new_prob_rows.append(new_prob_row)
+            elif list(set(value1)&set(value2))!=[]:
+                new_value_row = list(value1)
+                new_value_row.extend([x for x in value2 if x not in value1])
+                new_prob_row = prob_rows1[i]*prob_rows2[j]
+                new_value_rows.append(new_value_row)
+                new_prob_rows.append(new_prob_row)
+    
+    # Return new factors
+    return (new_var_names, new_value_rows, new_prob_rows)
 
 
 
