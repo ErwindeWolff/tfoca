@@ -1,4 +1,5 @@
 from variables import *
+from factory import *
 
 def sumOut(factor, var):
     # Unpack factor
@@ -108,7 +109,13 @@ def multiplyFactors(factor1, factor2):
     # Return new factors
     return (new_var_names, new_value_rows, new_prob_rows) 
         
-
+def variableElimination(variables, queries, evidence):
+    factors = selectFactors(variables,queries,[])
+    for factor in factors:
+        for evidenced in evidence:
+            factor = applyEvidence(factor,evidence[0],evidence[1])
+        
+    
 
 
 
