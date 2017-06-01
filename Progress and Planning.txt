@@ -11,19 +11,20 @@ DONE:
 - Apply Evidence to Factor                                                                                  Erwin
 - Gather factors (with pruning)                                                                             Erwin
 
+- Implement predictive processing idea (KLD)                                                                Erwin
+
+
 
 TODO:
 
-- Create framework for fully worked out variable: i.e. fixed, complete probability table as argument.       (Wouter)
+- Create framework for fully worked out variable: i.e. fixed, complete probability table as argument.       Wouter
 
-- Framework for random networks                                                                             (Wouter)
+- Framework for random networks                                                                             Wouter
 
 - Network GUI (because time to spare)                                                                       Erwin
 
 
-- Variable elimination algorithm (binding elements together)                                                -
-
-- Implement predictive processing idea (KLD)                                                                -
+- Variable elimination algorithm (binding elements together)                                                Wouter
 
 
 - Random sampling approach to networks.                                                                     Later
