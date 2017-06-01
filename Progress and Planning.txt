@@ -7,7 +7,7 @@ DONE:
 - Random nodes                                                                                              Wouter
 
 - Sum out factor                                                                                            Erwin
-- Multiply two factors                                                                                  Wouter
+- Multiply two factors                                                                                      Wouter
 - Apply Evidence to Factor                                                                                  Erwin
 - Gather factors (with pruning)                                                                             Erwin
 
@@ -16,11 +16,15 @@ TODO:
 
 - Create framework for fully worked out variable: i.e. fixed, complete probability table as argument.       (Wouter)
 
-- Bayesian Network class                                                                                    (Wouter)
-
-- Variable elimination:
+- Framework for random networks                                                                             (Wouter)
 
 - Network GUI (because time to spare)                                                                       Erwin
+
+
+- Variable elimination algorithm (binding elements together)                                                -
+
+- Implement predictive processing idea (KLD)                                                                -
+
 
 - Random sampling approach to networks.                                                                     Later
 

@@ -53,7 +53,11 @@ def applyEvidence(factor, var, evidence_value):
 
     return (new_var_names, new_value_rows, new_prob_rows)
 
+
+
 def multiplyFactors(factor1, factor2):
+
+    # Unpack factors
     (var_names1, value_rows1, prob_rows1) = factor1
     (var_names2, value_rows2, prob_rows2) = factor2
     
