@@ -54,43 +54,60 @@ def applyEvidence(factor, var, evidence_value):
     return (new_var_names, new_value_rows, new_prob_rows)
 
 
-
 def multiplyFactors(factor1, factor2):
 
     # Unpack factors
     (var_names1, value_rows1, prob_rows1) = factor1
     (var_names2, value_rows2, prob_rows2) = factor2
-    
-    disjoint = bool(list(set(var_names1)&set(var_names2))==[])
-    new_var_names = [i for i in var_names1]
-    new_var_names.extend([i for i in var_names2 if i not in new_var_names])   
-    
+
+    matching_indices = dict()
+    for i, name1 in enumerate(var_names1):
+        for j, name2 in enumerate(var_names2):
+            if name1 == name2:
+                matching_indices[j] = i
+
+    # Create new variable names
+    new_var_names = [name for name in var_names1]
+    new_var_names.extend([name for name in var_names2 if name not in new_var_names])
+
+    # Variables to fill
     new_value_rows = list()
     new_prob_rows = list()
 
-    for i, value1 in enumerate(value_rows1):
-        for j, value2 in enumerate(value_rows2):
-            if disjoint:
-                new_value_row = list(value1)
-                new_value_row.extend(value2)
-                new_prob_row = prob_rows1[i]*prob_rows2[j]
-                new_value_rows.append(new_value_row)
-                new_prob_rows.append(new_prob_row)
-            elif list(set(value1)&set(value2))!=[]:
-                new_value_row = list(value1)
-                new_value_row.extend([x for x in value2 if x not in value1])
-                new_prob_row = prob_rows1[i]*prob_rows2[j]
-                new_value_rows.append(new_value_row)
-                new_prob_rows.append(new_prob_row)
+    # Get each value row with associated probability
+    for value_row1, prob1 in zip(value_rows1, prob_rows1):
     
+        # Default is order of factor 1
+        new_value_row = [val for val in value_row1]
+        
+        # Get each value row with associated probability
+        for value_row2, prob2 in zip(value_rows2, prob_rows2):
+
+            # Traverse all values in value_row 2
+            succesful = True
+            for j, value in enumerate(value_row2):
+
+                # If the value should match one in value row 1:
+                if (j in matching_indices):
+                    
+                    # ...and this fails: stop
+                    if value_row1[matching_indices[j]] != value:
+                        succesful = False
+                        break
+                
+                # If not, add value to current row
+                else:
+                    new_value_row.append(value)
+
+            # If rows could be merged: add them (else do nothing)
+            if succesful:
+                new_value_rows.append(new_value_row)
+                new_prob_row = prob1 * prob2
+                new_prob_rows.append(new_prob_row)
+
     # Return new factors
-    return (new_var_names, new_value_rows, new_prob_rows)
-
-
-
-
-
-
+    return (new_var_names, new_value_rows, new_prob_rows) 
+        
 
 
 
