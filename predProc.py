@@ -8,9 +8,7 @@ def KLD (obs, pred):
 
 def simulation( agent_model, world_model, nr_iterations, sampling=False, weighting = False):
 
-    hypo_nodes = agent_model.getHypthesisNodes()    
-    pred_nodes = agent_model.getPredictionNodes()
-
+    hypo_nodes = agent_model.getHypothesisNodes()    
 
     pred_errors = list() 
 
@@ -18,8 +16,8 @@ def simulation( agent_model, world_model, nr_iterations, sampling=False, weighti
 
         hypo_truth = world_model.observe(hypo_nodes)
 
-        pred =  agent_model.getPrediction(pred_nodes, hypo_truth, sampling)
-        obs = world_model.getPrediction(pred_nodes, hypo_truth, sampling)
+        pred =  agent_model.getPrediction(hypo_truth, sampling)
+        obs = world_model.getPrediction(hypo_truth, sampling)
 
         pred_error = KLD(obs, pred)
 
