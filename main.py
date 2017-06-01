@@ -43,18 +43,21 @@ def printFactor(f):
 #printFactor(f3)
 
 
+v1 = FixedVariable(names = ['Person'], values=['Erwin', 'Wouter'], value_row_table=[[]], prob_table=[[0.5, 0.5]])
+
+v2 = FixedVariable(names = ["Fairness", "Person"], values=["Fair", "Unfair"], value_row_table = [["Erwin"], ["Wouter"]], prob_table = [[0.5,0.5],[0.8,0.2]])
 
 
-v1 = Variable(names = ["Person"], values=["Erwin", "Wouter"], parentValues=[])
+#v1 = Variable(names = ["Person"], values=["Erwin", "Wouter"], parentValues=[])
 
-v2 = Variable(names = ["Fairness", "Person"], values=["Fair", "Unfair"], parentValues=[v1.values]) 
+#v2 = Variable(names = ["Fairness", "Person"], values=["Fair", "Unfair"], parentValues=[v1.values]) 
 
 v3 = Variable(names = ["Brightness"], values=["Light", "Dark"], parentValues=[])
                     
 v4 = Variable(names = ["Coin Outcome", "Fairness", "Brightness", "Person"], values=["Heads", "Tails"],
                  parentValues = [v2.values, v3.values, v1.values])
 
-factors = selectFactors( [v1, v2, v3, v4], ["Fairness"], [])
+factors = selectFactors( [v1, v2, v3, v4], ["Coin Outcome"], [])
 
 for factor in factors:
     printFactor(factor)
@@ -63,7 +66,8 @@ f1 = multiplyFactors(factors[0], factors[1])
 
 printFactor(f1)
 
-f2 = sumOut(f1, "Person")
+print(factors[1][0][0])
+f2 = sumOut(f1, factors[1][0][0])
 
 printFactor(f2)
 
