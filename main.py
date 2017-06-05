@@ -62,14 +62,15 @@ factors = selectFactors( [v1, v2, v3, v4], ["Coin Outcome"], [])
 for factor in factors:
     printFactor(factor)
 
-f1 = multiplyFactors(factors[0], factors[1])
+f1 = variableElimination([v1,v2,v3,v4],["Coin Outcome","Brightness"],[])
 
+print "Output factor is:"
 printFactor(f1)
 
-print(factors[1][0][0])
-f2 = sumOut(f1, factors[1][0][0])
-
-printFactor(f2)
+#print(factors[1][0][0])
+#f2 = sumOut(f1, factors[1][0][0])
+#
+#printFactor(f2)
 
 
 

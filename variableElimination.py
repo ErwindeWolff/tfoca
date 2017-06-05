@@ -109,11 +109,26 @@ def multiplyFactors(factor1, factor2):
     # Return new factors
     return (new_var_names, new_value_rows, new_prob_rows) 
         
-def variableElimination(variables, queries, evidence):
-    factors = selectFactors(variables,queries,[])
+def variableElimination(variables, queries, evidence=[]):
+    # select factors from all the available variables and the queried variables
+    factors = selectFactors(variables,queries,[])  
     for factor in factors:
         for evidenced in evidence:
-            factor = applyEvidence(factor,evidence[0],evidence[1])
+            factor = applyEvidence(factor,evidenced[0],evidenced[1])
+       
+    # multiply all factors
+    theFactor = factors[0]
+    for factor in factors[::-1]:
+        if factor !=factors[0]:
+            theFactor = multiplyFactors(theFactor, factor)
+            factors = factors[:-1]
+            
+    # sum out variables that are not query variables 
+    for var in theFactor[0]:
+        if var not in queries:
+            theFactor = sumOut(theFactor, var)
+    
+    return theFactor
         
     
 
