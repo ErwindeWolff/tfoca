@@ -12,23 +12,23 @@ DONE:
 - Gather factors (with pruning)                                                                             Erwin
 - Variable elimination algorithm (binding elements together)                                                Wouter
 
-
 - Create framework for fully worked out variable: i.e. fixed, complete probability table as argument.       Erwin
-
 - Implement predictive processing idea (KLD)                                                                Erwin
 
+- Figure out how to update hyperpriors (weighted influence) for deterministic                               Together
 
 
 TODO:
 
 
-- Framework for random networks                                                                             Wouter
+- Framework for random tree networks                                                                        Wouter
+- Framework for random funnel networks                                                                      Later
+
+- Random sampling approach to networks.                                                                     Erwin
+
+- Figure out how to update hyperpriors (weighted influence) for sampling                                    Later
+
+
+MAYBE:
 
 - Network GUI (because time to spare)                                                                       Erwin
-
-- Random sampling approach to networks.                                                                     Later
-
-- Figure out how to update hyperpriors (weighted influence)                                                 Later
-
-
-
