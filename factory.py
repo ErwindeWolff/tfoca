@@ -9,7 +9,7 @@ def selectFactors(variables, queries, evidenced=[]):
         addParentsRecur(variables, factors, var)
         
     # Go up from evidenced nodes
-    for var in evidenced:
+    for var, value in evidenced:
         addParentsRecur(variables, factors, var)
         
     return factors

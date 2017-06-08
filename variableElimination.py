@@ -1,5 +1,6 @@
 from variables import *
 from factory import *
+import numpy as np
 
 def sumOut(factor, var):
     # Unpack factor
@@ -77,12 +78,12 @@ def multiplyFactors(factor1, factor2):
 
     # Get each value row with associated probability
     for value_row1, prob1 in zip(value_rows1, prob_rows1):
-    
-        # Default is order of factor 1
-        new_value_row = [val for val in value_row1]
         
         # Get each value row with associated probability
         for value_row2, prob2 in zip(value_rows2, prob_rows2):
+
+            # Default is order of factor 1
+            new_value_row = [val for val in value_row1]
 
             # Traverse all values in value_row 2
             succesful = True
@@ -108,36 +109,77 @@ def multiplyFactors(factor1, factor2):
 
     # Return new factors
     return (new_var_names, new_value_rows, new_prob_rows) 
+
+
+
+# Function to print factor
+def printFactor(f):
+
+    print f[0]
+    (foo, bar) = (f[1], f[2])
+    for i in range(len(foo)):
+        print foo[i], bar[i]
+    print ""
         
-def variableElimination(variables, queries, evidence=[]):
-    # select factors from all the available variables and the queried variables
-    factors = selectFactors(variables,queries,[])  
+
+
+def VE (variables, query, evidence=[]):
+
+    # Gather relevant factors
+    factors = selectFactors(variables, query, evidence)  
+
+    # Apply evidence to factors
+    for evidenced in evidence:
+        for i, factor in enumerate(factors):
+            if (evidenced[0] in factor[0]):
+                factors[i] = applyEvidence(factor,evidenced[0],evidenced[1])
+
+    # Determine variable (names) to eliminate
+    var_names = list()
     for factor in factors:
-        for evidenced in evidence:
-            factor = applyEvidence(factor,evidenced[0],evidenced[1])
-       
-    # multiply all factors
-    theFactor = factors[0]
-    for factor in factors[::-1]:
-        if factor !=factors[0]:
-            theFactor = multiplyFactors(theFactor, factor)
-            factors = factors[:-1]
+        name = factor[0][0]
+        if (name != query):
+            var_names.append(name)
+
+    for i, name in enumerate(var_names):
+        print str(i+1) + ". Eliminating '" + name + "'" 
+
+        # Gather factors to multiply then sumout
+        process_factors = [factor for factor in factors if name in factor[0]]
+
+        # Redefine factors to no longer contain to be processed factors
+        factors = [factor for factor in factors if factor not in process_factors]
+
+        # While there are at least two factors to multiply
+        new_factor = process_factors[0]
+
+        while (len(process_factors) > 1):
             
-    # sum out variables that are not query variables 
-    for var in theFactor[0]:
-        if var not in queries:
-            theFactor = sumOut(theFactor, var)
-    
-    return theFactor
+            # Multiply two factors
+            new_factor = multiplyFactors(process_factors[0], process_factors[1])
         
-    
+            # Replace first factor with new one and pop last from list
+            process_factors[0] = new_factor
+            process_factors = [f for i, f in enumerate(process_factors) if i > 1]
 
+        # Sum out the variable in question
+        new_factor = sumOut(new_factor, name)
 
+        # Append new factor
+        factors.append(new_factor)
 
+    factor = factors[0]
+    while (len(factors) > 1):
+        factor = multiplyFactors(factors[0], factors[-1])
+        factors = factors[:-1]
 
+    print ""
 
+    sum_probs = sum(factor[2])
+    factor = (factor[0], factor[1], [prob/sum_probs for prob in factor[2]])
 
-
+    return factor
+        
 
 
 

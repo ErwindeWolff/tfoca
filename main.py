@@ -1,6 +1,7 @@
 from variables import *
-from variableElimination import * 
+from variableElimination2 import * 
 from factory import *
+from sampler import *
 
 # Function to print variable table
 def printVar(var):
@@ -57,15 +58,20 @@ v3 = Variable(names = ["Brightness"], values=["Light", "Dark"], parentValues=[])
 v4 = Variable(names = ["Coin Outcome", "Fairness", "Brightness", "Person"], values=["Heads", "Tails"],
                  parentValues = [v2.values, v3.values, v1.values])
 
-factors = selectFactors( [v1, v2, v3, v4], ["Coin Outcome"], [])
 
-for factor in factors:
-    printFactor(factor)
 
-f1 = variableElimination([v1,v2,v3,v4],["Coin Outcome","Brightness"],[])
 
-print "Output factor is:"
-printFactor(f1)
+printFactor( VE( [v1, v2, v3, v4], "Person", [("Coin Outcome", "Heads")]))
+
+#print getSampledProbability( [v1, v2, v3, v4], ["Person"], [("Coin Outcome", "Heads")], 100, 0.1)
+
+#for factor in factors:
+#    printFactor(factor)
+
+#f1 = variableElimination([v1,v2,v3,v4],["Coin Outcome","Brightness"],[])
+
+#print "Output factor is:"
+#printFactor(f1)
 
 #print(factors[1][0][0])
 #f2 = sumOut(f1, factors[1][0][0])

@@ -29,6 +29,9 @@ TODO:
 - Figure out how to update hyperpriors (weighted influence) for sampling                                    Later
 
 
+- See how query can be more than one variable and still be correct                                          Later
+
+
 MAYBE:
 
 - Network GUI (because time to spare)                                                                       Erwin
