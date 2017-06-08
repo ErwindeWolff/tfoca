@@ -1,5 +1,5 @@
 from variables import *
-from variableElimination2 import * 
+from variableElimination import * 
 from factory import *
 from sampler import *
 
@@ -26,22 +26,6 @@ def printFactor(f):
     print ""
 
 
-# Bayesian Variable
-#var = HyperpriorVariable(names = ["Coin Outcome", "Fairness", "Brightness", "Person"], values=["Heads", "Tails"],
-#                 parentValues = [["Fair", "Unfair"], ["Light", "Dark"], ["Erwin", "Wouter"]]) 
-
-# Factor, triple with   f[0] = variable names
-#                       f[1] = variable & parent values
-#                       f[2] = probabilities
-
-#f1 = var.getProbabilityTable()
-#f1 = (var.names, f1[0], f1[1])
-#f2 = applyEvidence(f1, "Brightness", "Light")
-#f3 = sumOut(f2, "Fairness")
-
-#printFactor(f1)
-#printFactor(f2)
-#printFactor(f3)
 
 
 v1 = FixedVariable(names = ['Person'], values=['Erwin', 'Wouter'], value_row_table=[[]], prob_table=[[0.5, 0.5]])
@@ -59,24 +43,21 @@ v4 = Variable(names = ["Coin Outcome", "Fairness", "Brightness", "Person"], valu
                  parentValues = [v2.values, v3.values, v1.values])
 
 
+#full_factor = VE( [v1, v2, v3, v4], v4.names, [])
+
+#printFactor(full_factor)
+
+#factor = VE([v1,v2,v3,v4], ["Coin Outcome"], [])
+#printFactor(factor)
+
+(full_factor, small_factor) = getPredictionTables( [v1, v2, v3, v4], ["Coin Outcome"], [])
+
+printFactor(full_factor)
+printFactor(small_factor)
 
 
-printFactor( VE( [v1, v2, v3, v4], "Person", [("Coin Outcome", "Heads")]))
 
 #print getSampledProbability( [v1, v2, v3, v4], ["Person"], [("Coin Outcome", "Heads")], 100, 0.1)
-
-#for factor in factors:
-#    printFactor(factor)
-
-#f1 = variableElimination([v1,v2,v3,v4],["Coin Outcome","Brightness"],[])
-
-#print "Output factor is:"
-#printFactor(f1)
-
-#print(factors[1][0][0])
-#f2 = sumOut(f1, factors[1][0][0])
-#
-#printFactor(f2)
 
 
 

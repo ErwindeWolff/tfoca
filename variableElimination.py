@@ -2,35 +2,15 @@ from variables import *
 from factory import *
 import numpy as np
 
-def sumOut(factor, var):
-    # Unpack factor
-    (var_names, value_rows, prob_rows) = factor
 
-    # Get index of to-sum-out variable in table
-    index = var_names.index(var)
-    
-    # Create new factor parameters
-    new_var_names = [name for i, name in enumerate(var_names) if i != index]
-    new_value_rows = list()
-    new_prob_rows = list()
+# Function to print factor
+def printFactor(f):
 
-    # Traverse each row of probability table
-    for value_row, prob_row in zip(value_rows, prob_rows):
-        # Remove to-sum-out variable from row
-        new_value_row = [value for i, value in enumerate(value_row) if i != index]
-
-        # If this combination was not yet added, add and save probability
-        if (new_value_row not in new_value_rows):
-            new_value_rows.append(new_value_row)
-            new_prob_rows.append(prob_row)
-
-        # else if if was added, just add this probability to existing one
-        else:
-            i = new_value_rows.index(new_value_row)
-            new_prob_rows[i] += prob_row
-
-    # Return new factor
-    return (new_var_names, new_value_rows, new_prob_rows)
+    print f[0]
+    (foo, bar) = (f[1], f[2])
+    for i in range(len(foo)):
+        print foo[i], bar[i]
+    print ""
 
 
 def applyEvidence(factor, var, evidence_value):
@@ -62,6 +42,8 @@ def multiplyFactors(factor1, factor2):
     (var_names1, value_rows1, prob_rows1) = factor1
     (var_names2, value_rows2, prob_rows2) = factor2
 
+    # Find indices where column i in factor 1 points to 
+    # the same variable as a column j in factor 2
     matching_indices = dict()
     for i, name1 in enumerate(var_names1):
         for j, name2 in enumerate(var_names2):
@@ -109,18 +91,37 @@ def multiplyFactors(factor1, factor2):
 
     # Return new factors
     return (new_var_names, new_value_rows, new_prob_rows) 
-
-
-
-# Function to print factor
-def printFactor(f):
-
-    print f[0]
-    (foo, bar) = (f[1], f[2])
-    for i in range(len(foo)):
-        print foo[i], bar[i]
-    print ""
         
+
+def sumOut(factor, var):
+    # Unpack factor
+    (var_names, value_rows, prob_rows) = factor
+
+    # Get index of to-sum-out variable in table
+    index = var_names.index(var)
+    
+    # Create new factor parameters
+    new_var_names = [name for i, name in enumerate(var_names) if i != index]
+    new_value_rows = list()
+    new_prob_rows = list()
+
+    # Traverse each row of probability table
+    for value_row, prob_row in zip(value_rows, prob_rows):
+        # Remove to-sum-out variable from row
+        new_value_row = [value for i, value in enumerate(value_row) if i != index]
+
+        # If this combination was not yet added, add and save probability
+        if (new_value_row not in new_value_rows):
+            new_value_rows.append(new_value_row)
+            new_prob_rows.append(prob_row)
+
+        # else if if was added, just add this probability to existing one
+        else:
+            i = new_value_rows.index(new_value_row)
+            new_prob_rows[i] += prob_row
+
+    # Return new factor
+    return (new_var_names, new_value_rows, new_prob_rows)
 
 
 def VE (variables, query, evidence=[]):
@@ -138,11 +139,10 @@ def VE (variables, query, evidence=[]):
     var_names = list()
     for factor in factors:
         name = factor[0][0]
-        if (name != query):
+        if (name not in query):
             var_names.append(name)
 
     for i, name in enumerate(var_names):
-        print str(i+1) + ". Eliminating '" + name + "'" 
 
         # Gather factors to multiply then sumout
         process_factors = [factor for factor in factors if name in factor[0]]
@@ -168,18 +168,39 @@ def VE (variables, query, evidence=[]):
         # Append new factor
         factors.append(new_factor)
 
+
+    # Multiply remaining factors
     factor = factors[0]
     while (len(factors) > 1):
         factor = multiplyFactors(factors[0], factors[-1])
         factors = factors[:-1]
 
-    print ""
-
+    # Perform normalization
     sum_probs = sum(factor[2])
     factor = (factor[0], factor[1], [prob/sum_probs for prob in factor[2]])
 
     return factor
         
+
+def getPredictionTables (variables, query, evidence):
+
+    # Create new query for full table
+    for var in variables:
+        if var.names[0] == query[0]:
+            new_query = var.names
+
+    # Find this full factor (for weighted updates)
+    full_factor = VE(variables, new_query, evidence)
+
+    # Sum out larger to smaller variable
+    small_factor = full_factor
+    for var_name in new_query:
+        if var_name not in query:
+            small_factor = sumOut(small_factor, var_name)
+
+    # Return full table first, smaller one second
+    return (full_factor, small_factor)
+
 
 
 
