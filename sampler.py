@@ -16,7 +16,7 @@ def getSampledProbability(variables, query, evidence, nr_samples, bias=0.1):
             values = [value for value in var.values]
 
     if len(count) == 0:
-        print "Query not existent among variables: {0}".format(query)
+        print("Query not existent among variables: {0}".format(query))
         return
 
     for i in range(nr_samples):
@@ -67,7 +67,7 @@ def getSampledPrediction(variables, query, evidence):
             factors = new_factors
 
     for f in factors:
-        print f[0], f[1]
+        print(f[0], f[1])
 
     # Return the value of the query factor
     return sampleFactor(factors[0])

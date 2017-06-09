@@ -6,11 +6,11 @@ import numpy as np
 # Function to print factor
 def printFactor(f):
 
-    print f[0]
+    print(f[0])
     (foo, bar) = (f[1], f[2])
     for i in range(len(foo)):
-        print foo[i], bar[i]
-    print ""
+        print (foo[i], bar[i])
+    print ("")
 
 
 def applyEvidence(factor, var, evidence_value):

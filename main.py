@@ -7,23 +7,23 @@ from sampler import *
 def printVar(var):
     
     if (len(var.names) > 1):
-        print var.names[0] + " given " + str(var.names[1::]) + "\n"
+        print(var.names[0] + " given " + str(var.names[1::]) + "\n")
     else:
-        print var.names[0]
+        print( var.names[0])
 
     (foo, bar) = var.getProbabilityTable()
     for i in range(len(foo)):
-        print foo[i], bar[i]
-    print ""
+        print( foo[i], bar[i])
+    print("")
 
 # Function to print factor
 def printFactor(f):
 
-    print f[0]
+    print(f[0])
     (foo, bar) = (f[1], f[2])
     for i in range(len(foo)):
-        print foo[i], bar[i]
-    print ""
+        print(foo[i], bar[i])
+    print("")
 
 
 
