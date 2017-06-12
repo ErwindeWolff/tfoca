@@ -17,19 +17,21 @@ DONE:
 
 - Figure out how to update hyperpriors (weighted influence) for deterministic                               Together
 
+- See how query can be more than one variable and still be correct                                          Erwin
+
+- Framework for random tree networks                                                                        Wouter
 
 TODO:
 
-
-- Framework for random tree networks                                                                        Wouter
-- Framework for random funnel networks                                                                      Later
+- Framework for random funnel networks                                                                      Wouter
+- Framework for layered networks																			Wouter
 
 - Random sampling approach to networks.                                                                     Erwin
+- Figure out how to update hyperpriors (weighted influence) for sampling                                    Erwin
 
-- Figure out how to update hyperpriors (weighted influence) for sampling                                    Later
+- Write non-sampling experiment																				Later
 
 
-- See how query can be more than one variable and still be correct                                          Later
 
 
 MAYBE:
