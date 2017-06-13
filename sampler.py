@@ -4,7 +4,52 @@ from factory import *
 from variableElimination import *
 
 
+
+def rejectionSampling(variables, query, evidence, nr_samples, bias=0.1):
+
+	small_table = []
+	full_table = []
+
+	for var in variables:
+		if var.names[0] == query:
+			query_parents = [name for name in var.names]
+
+
+	sampled_value = sampleFactor(factor)
+
+	f_name = factor[0][0]
+
+	# If the query was sampled, save into tables.
+	if f_name == query:
+		
+		# Increment the small table at the proper index
+		index = small_table[0].index(sampled_value) 
+		small_table[0][index] += 1.0
+		
+		# Increment the full table at the proper index
+		cur_table_entry[0] = sampled_value
+		index = full_table[0].index(cur_table_entry)
+		full_table[1][index] += 1.0
+		
+	# Else if the factor was one of the parents of the query
+	elif f_name in query_parents:
+	
+		index = query_parents.index(f_name)
+		cur_table_entry[index] = sampled_value
+
+
+	# Sample through factors one by one.
+
+	# If a parent of query: save sampled value
+	
+	# If query itself:
+		# Add 1 counter to small_table where the value equals the sampled_value
+		# Add 1 counter to full_table where the values of the parents and the sampled value of query match
+
+
+
 def getSampledProbability(variables, query, evidence, nr_samples, bias=0.1):
+
 
     count = []
     values = []
@@ -102,19 +147,5 @@ def sampleFactor(factor):
             choice -= prob
 
     return values[-1]
-
-
-
-
-
-
-
-    # Pick random factor with len(names) == 1
-    # Find value via sampling
-
-    # Apply evidence to factors
-        # Remove factor name from other factors if present
-
-# Return choice over query
 
 
