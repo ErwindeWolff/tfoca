@@ -20,13 +20,14 @@ DONE:
 - See how query can be more than one variable and still be correct                                          Erwin
 
 - Framework for random tree networks                                                                        Wouter
-
-TODO:
-
 - Framework for random funnel networks                                                                      Wouter
 - Framework for layered networks																			Wouter
 
-- Random sampling approach to networks.                                                                     Erwin
+- Random (rejection) sampling approach to networks.                                                         Erwin
+
+TODO:
+
+
 - Figure out how to update hyperpriors (weighted influence) for sampling                                    Erwin
 
 - Write non-sampling experiment																				Later

@@ -47,13 +47,15 @@ v4 = Variable(names = ["Coin Outcome", "Fairness", "Brightness", "Person"], valu
 
 #printFactor(full_factor)
 
-#factor = VE([v1,v2,v3,v4], ["Coin Outcome"], [])
-#printFactor(factor)
+factor = VE([v1,v2,v3,v4], ["Coin Outcome"], [])
+printFactor(factor)
 
-(full_factor, small_factor) = getPredictionTables( [v1, v2, v3, v4], ["Coin Outcome"], [])
+#(full_factor, small_factor) = getPredictionTables( [v1, v2, v3, v4], ["Coin Outcome"], [])
 
-printFactor(full_factor)
-printFactor(small_factor)
+#printFactor(full_factor)
+#printFactor(small_factor)
+
+rejectionSampling([v1, v2, v3, v4], ["Coin Outcome"], [], 1000, bias=0.1)
 
 
 

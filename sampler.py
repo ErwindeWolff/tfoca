@@ -10,64 +10,130 @@ def rejectionSampling(variables, query, evidence, nr_samples, bias=0.1):
     small_table = []
     full_table = []
 
+    for var in variables:
+        if var.names[0] == query[0]:
+            small_table = [[value for value in var.values], [bias for _ in var.values]]
+            full_table = ["" for name in var.names]
+
+    if (len(full_table) <= 0):
+        print ("Query not in variable list: {0}".format(query))
+
+    factors = selectFactors(variables, query, evidence)
+    for _ in range(nr_samples):
+        (small_table_entry, full_table_entry) = rejectionSample(factors, query[0], evidence)
+
+        if len(small_table_entry) > 0:
+            index = small_table[0].index(small_table_entry)
+            small_table[1][index] += 1.0
+
+        #print("{0} = {1}\n".format(query[0], small_table_entry))
+
+    sum_counts = sum(small_table[1])
+    small_table[1] = [count/sum_counts for count in small_table[1]]
+
+    for x, y in zip(small_table[0], small_table[1]):
+        print(x, y)
+
+
     #index = small_table[0].index(sampled_value) 
     #small_table[0][index] += 1.0
 
 
-def rejectionSampling(factors, query, evidence):
+def rejectionSample(all_factors, query, evidence):
 
-    
+    # Make copy of all_factors
+    factors = [factor for factor in all_factors]
 
     # Unpack evidence into names and values
     evidence_names = [name for (name, value) in evidence]
     evidence_values = [value for (name, value) in evidence]
 
+    small_table_entry = ""
+    full_table_entry = []
 
-	small_table_entry = ""
-	full_table_entry = []
+    query_parents = []
+    for f in factors:
+        if f[0][0] == query:
+            query_parents = [name for name in f[0]]
+            full_table_entry = ["" for _ in f[0]]
 
-	for var in variables:
-		if var.names[0] == query:
-			query_parents = [name for name in var.names]
+    while len(factors) > 0:
+        
+        # Split factor into to-sample and not-to-sample
+        single_factors = []
+        new_factors = []
+   
+        for factor in factors:
 
+            # To sample
+            if len(factor[0]) == 1:
+                single_factors.append(factor)
 
-    for factor in some loop:
+            # Not-to-sample
+            else:
+                new_factors.append(factor)
 
-	    sampled_value = sampleFactor(factor)
+        # Change pointer
+        factors = new_factors
 
-	    f_name = factor[0][0]
+        for factor in single_factors:
 
-	    # If the query was sampled, save into tables.
-	    if f_name == query:
+            # Get random value from factor
+            sampled_value = sampleFactor(factor)
+
+            # Extract name from factor
+            f_name = factor[0][0]
+
+	        # If the query was sampled, save into tables.
+            if f_name == query:
+
+		        # Increment the small table at the proper index
+                small_table_entry = sampled_value
 		
-		    # Increment the small table at the proper index
-            small_table_entry = sampled_value
+		        # Increment the full table at the proper index
+                full_table_entry[0] = sampled_value
 		
-		    # Increment the full table at the proper index
-		    full_table_entry[0] = sampled_value
-		
-	    # Else if the factor was one of the parents of the query
-	    elif f_name in query_parents:
+	        # Else if the factor was one of the parents of the query
+            elif f_name in query_parents:
 	
-		    index = query_parents.index(f_name)
-		    full_table_entry[index] = sampled_value
+                index = query_parents.index(f_name)
+                full_table_entry[index] = sampled_value
 
-        # Check if sample matches 
-        if f_name in evidence_names:
+            # Check if sample matches 
+            if f_name in evidence_names:
 
-            # Rejection check
-            index = evidence_names.index(f_name)
-            if (sampled_value != evidence_values[index]):
-                return ("", [])
-
-    return (small_table, full_table)
+                # Rejection check
+                index = evidence_names.index(f_name)
+                if (sampled_value != evidence_values[index]):
+                    return ("", [])
 
 
+            # Now update all further factors to sample over with this evidence
+            new_factors = list()
+            for f in factors:
+                if (f_name in f[0]):
+                    new_factor = applyEvidence(f, f_name, sampled_value)
+                    new_factor = ([n for n in f[0] if n != f_name], new_factor[1], new_factor[2])
+                    new_factors.append(new_factor)
+                else:
+                    new_factors.append(f)
+            # Change pointer
+            factors = new_factors        
+
+    return (small_table_entry, full_table_entry)
+
+            
 
 
 
-index = full_table[0].index(cur_table_entry)
-full_table[1][index] += 1.0
+
+
+
+
+
+
+#index = full_table[0].index(cur_table_entry)
+#full_table[1][index] += 1.0
 
 
 	# Sample through factors one by one.
