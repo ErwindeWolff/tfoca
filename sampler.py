@@ -7,35 +7,67 @@ from variableElimination import *
 
 def rejectionSampling(variables, query, evidence, nr_samples, bias=0.1):
 
-	small_table = []
-	full_table = []
+    small_table = []
+    full_table = []
+
+    #index = small_table[0].index(sampled_value) 
+    #small_table[0][index] += 1.0
+
+
+def rejectionSampling(factors, query, evidence):
+
+    
+
+    # Unpack evidence into names and values
+    evidence_names = [name for (name, value) in evidence]
+    evidence_values = [value for (name, value) in evidence]
+
+
+	small_table_entry = ""
+	full_table_entry = []
 
 	for var in variables:
 		if var.names[0] == query:
 			query_parents = [name for name in var.names]
 
 
-	sampled_value = sampleFactor(factor)
+    for factor in some loop:
 
-	f_name = factor[0][0]
+	    sampled_value = sampleFactor(factor)
 
-	# If the query was sampled, save into tables.
-	if f_name == query:
+	    f_name = factor[0][0]
+
+	    # If the query was sampled, save into tables.
+	    if f_name == query:
 		
-		# Increment the small table at the proper index
-		index = small_table[0].index(sampled_value) 
-		small_table[0][index] += 1.0
+		    # Increment the small table at the proper index
+            small_table_entry = sampled_value
 		
-		# Increment the full table at the proper index
-		cur_table_entry[0] = sampled_value
-		index = full_table[0].index(cur_table_entry)
-		full_table[1][index] += 1.0
+		    # Increment the full table at the proper index
+		    full_table_entry[0] = sampled_value
 		
-	# Else if the factor was one of the parents of the query
-	elif f_name in query_parents:
+	    # Else if the factor was one of the parents of the query
+	    elif f_name in query_parents:
 	
-		index = query_parents.index(f_name)
-		cur_table_entry[index] = sampled_value
+		    index = query_parents.index(f_name)
+		    full_table_entry[index] = sampled_value
+
+        # Check if sample matches 
+        if f_name in evidence_names:
+
+            # Rejection check
+            index = evidence_names.index(f_name)
+            if (sampled_value != evidence_values[index]):
+                return ("", [])
+
+    return (small_table, full_table)
+
+
+
+
+
+index = full_table[0].index(cur_table_entry)
+full_table[1][index] += 1.0
 
 
 	# Sample through factors one by one.
@@ -45,6 +77,32 @@ def rejectionSampling(variables, query, evidence, nr_samples, bias=0.1):
 	# If query itself:
 		# Add 1 counter to small_table where the value equals the sampled_value
 		# Add 1 counter to full_table where the values of the parents and the sampled value of query match
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
