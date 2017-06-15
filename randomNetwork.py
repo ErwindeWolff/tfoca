@@ -3,6 +3,7 @@ from variables import *
 from bayesianNetwork import *
 from variableElimination import * 
 from factory import *
+import numpy as np
 
 def makeTreeNetwork(tree_depth, num_children = 2):
     network = list()
@@ -49,7 +50,7 @@ def makeFunnelNetwork(funnel_depth, num_parents = 2):
     # append the node's own name to the list of names
     names.append("Layer_{0}_Node_{1}".format(depth, 1))
     # extract parent values and names from this node's parents
-    if len(parents)>1:    
+    if len(parents)>0:    
         for parent in parents:
             parentValues.append(parent.values)
             names.append(parent.names[0])
@@ -74,7 +75,7 @@ def makeParents(network, depth, num_parents, current_width):
             # make list of values for this variable
             values = ["True","False"]
             # extract parent values and names from this node's parents
-            if len(parents)>1:
+            if len(parents)>0:
                 for parent in parents:
                     parentValues.append(parent.values)
                     names.append(parent.names[0])
@@ -84,6 +85,36 @@ def makeParents(network, depth, num_parents, current_width):
             network.append(parent)
     return current_parents
     
-myTree = makeFunnelNetwork(3, num_parents=3)
-
-printFactor( VE( myTree, ["Layer_1_Node_9"], [("Layer_2_Node_3","True")]))
+def makeLayerNetwork(layers):
+    network = list()
+    for i, layer in enumerate(layers):
+        # Save the previous layer's size for use in getting the parents' names and values
+        if i > 0:
+            previous = layers[i-1]
+        else:
+            previous = 0
+        # make a list for the current layer to be added to the network after each loop
+        current_layer = list()
+        for pos in range(layer):
+            # make parameters for current node
+            names = list()
+            values = ["True","False"]
+            parentValues = list()
+            # add the current node's name to the list of names
+            names.append("Layer_{0}_Node_{1}".format(i+1,pos+1))
+            # if there is a previous layer:
+            if previous > 0:
+                for parent in network[-previous:]:
+                    # extend the current node's names with the parents' names
+                    names.append(parent.names[0])
+                    # extend the current node's parent values with the parents' values
+                    parentValues.append(parent.values) 
+            node = Variable(names=names, values=values, parentValues=parentValues)
+            current_layer.append(node)
+        for node in current_layer:
+            network.append(node)
+    return network
+    
+myTree = makeLayerNetwork([2,3,4,2])
+factor = (VE(myTree, ["Layer_3_Node_2","Layer_2_Node_3"], []))
+printFactor(factor)
