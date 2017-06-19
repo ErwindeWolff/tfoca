@@ -3,6 +3,11 @@ from variableElimination import *
 from factory import *
 from sampler import *
 
+from agents import *
+from predProc import *
+
+import matplotlib.pyplot as plt
+
 # Function to print variable table
 def printVar(var):
     
@@ -39,7 +44,7 @@ v2 = FixedVariable(names = ["Fairness", "Person"], values=["Fair", "Unfair"], va
 
 v3 = Variable(names = ["Brightness"], values=["Light", "Dark"], parentValues=[])
                     
-v4 = Variable(names = ["Coin Outcome", "Fairness", "Brightness", "Person"], values=["Heads", "Tails"],
+v4 = HyperpriorVariable(names = ["Coin Outcome", "Fairness", "Brightness", "Person"], values=["Heads", "Tails"],
                  parentValues = [v2.values, v3.values, v1.values])
 
 
@@ -47,22 +52,49 @@ v4 = Variable(names = ["Coin Outcome", "Fairness", "Brightness", "Person"], valu
 
 #printFactor(full_factor)
 
-factor = VE([v1,v2,v3,v4], ["Coin Outcome"], [])
-printFactor(factor)
+#factor = VE([v1,v2,v3,v4], ["Coin Outcome"], [])
+#printFactor(factor)
 
 #(full_factor, small_factor) = getPredictionTables( [v1, v2, v3, v4], ["Coin Outcome"], [])
 
 #printFactor(full_factor)
 #printFactor(small_factor)
 
-rejectionSampling([v1, v2, v3, v4], ["Coin Outcome"], [], 1000, bias=0.1)
+#rejectionSampling([v1, v2, v3, v4], ["Coin Outcome"], [], 1000, bias=0.1)
 
 
+a = DeterministicAgent([v1,v2,v3,v4], [v1], [v4], use_weighting=False)
 
-#print getSampledProbability( [v1, v2, v3, v4], ["Person"], [("Coin Outcome", "Heads")], 100, 0.1)
+err = []
+epochs = 20
+for i in range(epochs):
 
+	(full_table, small_table, hypothesis) = a.makePrediction(["Coin Outcome"], ["Heads"], [])
 
+	#printFactor(full_table)
+	#printFactor(small_table)
 
+	if (i % 2 == 0):
+		observation = [1.0, 0.0]
+	else:
+		observation = [1.0, 0.0]
+
+	prediction_error = KLD(observation, small_table[2])
+	err.append(prediction_error)
+
+	for value_row, prob_row in zip(full_table[1], full_table[2]):
+
+		update = [prob_row * obs for obs in observation]
+
+		a.updateModel("Coin Outcome", value_row[1:], update, prediction_error)
+
+	print ""
+
+x = [i for i in range(epochs)]
+
+plt.figure()
+plt.plot(x, err)
+plt.show()
 
 
 
