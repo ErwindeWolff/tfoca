@@ -29,7 +29,7 @@ v4 = HyperpriorVariable(names = ["Coin Outcome", "Fairness", "Brightness", "Pers
 
 # Methods for creating agent title in plot
 use_sampling = True
-use_weighting = False
+use_weighting = True
 
 # Define network for agents
 model = [v1, v2, v3, v4]
@@ -38,7 +38,7 @@ pred = [v4]
 
 # Parameters for sampling
 nr_hypo_samples = 10
-nr_samples = 100
+nr_samples = 1000
 
 # Make agent
 if use_sampling:
