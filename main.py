@@ -28,7 +28,7 @@ v4 = HyperpriorVariable(names = ["Coin Outcome", "Fairness", "Brightness", "Pers
 
 
 # Methods for creating agent title in plot
-use_sampling = False
+use_sampling = True
 use_weighting = False
 
 # Define network for agents
@@ -78,20 +78,25 @@ for i in tqdm(range(epochs)):
 x = [i for i in range(epochs)]
 
 plt.figure()
+plt.plot(x, err)
+plt.axis([-2, 252, -0.01, 1.01])
 
 if use_sampling:
 	if use_weighting:
-		plt.title("Sampling with weighting")
+		plt.title("Sampling with weighting ({0} samples)".format(nr_samples))
+		plt.savefig('Results/sample_weight_{0}_samples.png'.format(nr_samples))
 	else:
-		plt.title("Sampling without weighting")
+		plt.title("Sampling without weighting ({0} samples)".format(nr_samples))
+		plt.savefig('Results/sample_no_weight_{0}_samples.png'.format(nr_samples))
 else:
 	if use_weighting:
 		plt.title("Normative with weighting")
+		plt.savefig('Results/normative_weight.png')
 	else:
 		plt.title("Normative without weighting")
+		plt.savefig('Results/normative_no_weight.png')
 
-plt.plot(x, err)
-plt.show()
+#plt.show()
 
 
 
