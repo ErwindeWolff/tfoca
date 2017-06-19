@@ -1,6 +1,8 @@
 from variables import *
-from variableElimination import *
 from factory import *
+
+import variableElimination as ve
+import sampler
 
 from random import *
 
@@ -27,10 +29,10 @@ class DeterministicAgent():
 		hypotheses = self.getHypotheses()
 		shuffle(hypotheses)
 
-		for i, hypo in enumerate(hypotheses):
+		for hypo in hypotheses:
 
 			# Get prediction over query
-			(full_table, small_table) = getPredictionTables(self.model, query, evidence + hypo)
+			(full_table, small_table) = ve.getPredictionTables(self.model, query, evidence + hypo)
 			
 			# Extract prediction of desired value of query
 			index = small_table[1].index(query_value)
@@ -81,12 +83,13 @@ class DeterministicAgent():
 
 class SamplingAgent():
 
-	def __init__(self, model, hypothesisNodes, predictionNodes, nr_samples use_weighting = False):
+	def __init__(self, model, hypothesisNodes, predictionNodes, nr_hypo_samples, nr_samples, use_weighting = False):
 
 		self.model = model
 		self.hypothesisNodes = hypothesisNodes
 		self.predictionNodes = predictionNodes
 
+		self.nr_hypo_samples = nr_hypo_samples
 		self.nr_samples = nr_samples
 		self.use_weighting = use_weighting
 
@@ -99,18 +102,19 @@ class SamplingAgent():
 		best_small_table = []
 		best_hypothesis = []
 
-		# Gather hypotheses and shuffle to get some randomness if all the same prob.
-		hypotheses = self.getHypotheses()
-		shuffle(hypotheses)
+		# Gather nr_hypo_samples random hypotheses
+		hypotheses = sampler.generateHypotheses(self.hypothesisNodes, self.nr_hypo_samples)
 
 		for i, hypo in enumerate(hypotheses):
-			print(hypo)
+			#print(hypo)
 
 			# Get prediction over query
-			(full_table, small_table) = getPredictionTables(self.model, query, evidence + hypo)
+			(full_table, small_table) = sampler.rejectionSampling(self.model, query, evidence, self.nr_samples)
+			
+			#print(small_table)
 			
 			# Extract prediction of desired value of query
-			index = small_table[1].index(query_value)
+			index = small_table[1].index(query_value[0])
 			pred_query_value = small_table[2][index]
 
 			# If highest prediction, save over other
@@ -133,5 +137,6 @@ class SamplingAgent():
 		for var in self.predictionNodes:
 			if var.names[0] == query:
 				var.updateHyperprior(observation, parents)
+
 
 

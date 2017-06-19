@@ -3,40 +3,48 @@ from variables import *
 from factory import *
 from variableElimination import *
 
-
-
 def rejectionSampling(variables, query, evidence, nr_samples, bias=0.1):
 
-    small_table = []
-    full_table = []
+	# Create table to read probabilities from
+	small_table = []
+	full_table = []
+	for var in variables:
+		if var.names[0] == query[0]:
+			# Define small table
+			small_table = [query, [value for value in var.values], [bias for _ in var.values]]
+			
+			# Define full table via probability table
+			table = var.getProbabilityTable()
+			full_table = [var.names, table[0], [bias for _ in table[1]]]
 
-    for var in variables:
-        if var.names[0] == query[0]:
-            small_table = [[value for value in var.values], [bias for _ in var.values]]
-            full_table = ["" for name in var.names]
+	# If table could not be created, report and return
+	if (len(full_table) <= 0):
+		print ("Query not in variable list: {0}".format(query))
 
-    if (len(full_table) <= 0):
-        print ("Query not in variable list: {0}".format(query))
+	# Select factors
+	factors = selectFactors(variables, query, evidence)
+	
+	# Sample nr_samples times and remember outcomes
+	for _ in range(nr_samples):
+		(small_table_entry, full_table_entry) = rejectionSample(factors, query[0], evidence)
 
-    factors = selectFactors(variables, query, evidence)
-    for _ in range(nr_samples):
-        (small_table_entry, full_table_entry) = rejectionSample(factors, query[0], evidence)
+		# ... only if sample is valid
+		if len(small_table_entry) > 0:
+			index = small_table[1].index(small_table_entry)
+			small_table[2][index] += 1.0
+			
+			index = full_table[1].index(full_table_entry)
+			full_table[2][index] += 1.0
 
-        if len(small_table_entry) > 0:
-            index = small_table[0].index(small_table_entry)
-            small_table[1][index] += 1.0
+	# Normalize probabilities small table
+	sum_counts = sum(small_table[2])
+	small_table[2] = [count/sum_counts for count in small_table[2]]
+	
+	# Normalize probabilities full table
+	sum_counts = sum(full_table[2])
+	full_table[2] = [count/sum_counts for count in full_table[2]]
 
-        #print("{0} = {1}\n".format(query[0], small_table_entry))
-
-    sum_counts = sum(small_table[1])
-    small_table[1] = [count/sum_counts for count in small_table[1]]
-
-    for x, y in zip(small_table[0], small_table[1]):
-        print(x, y)
-
-
-    #index = small_table[0].index(sampled_value) 
-    #small_table[0][index] += 1.0
+	return (full_table, small_table)
 
 
 def rejectionSample(all_factors, query, evidence):
@@ -120,7 +128,6 @@ def rejectionSample(all_factors, query, evidence):
             # Change pointer
             factors = new_factors        
 
-    print (small_table_entry, full_table_entry)
     return (small_table_entry, full_table_entry)
 
 

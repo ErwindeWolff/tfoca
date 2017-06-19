@@ -97,7 +97,7 @@ for i in range(epochs):
 
 		a.updateModel("Mobile_movement", value_row[1:], update, prediction_error)
 
-	print ""
+	print()
 
 x = [i for i in range(epochs)]
 

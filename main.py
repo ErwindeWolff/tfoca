@@ -6,32 +6,11 @@ from sampler import *
 from agents import *
 from predProc import *
 
+from tqdm import *
+
 import matplotlib.pyplot as plt
 
-# Function to print variable table
-def printVar(var):
-    
-    if (len(var.names) > 1):
-        print(var.names[0] + " given " + str(var.names[1::]) + "\n")
-    else:
-        print( var.names[0])
-
-    (foo, bar) = var.getProbabilityTable()
-    for i in range(len(foo)):
-        print( foo[i], bar[i])
-    print("")
-
-# Function to print factor
-def printFactor(f):
-
-    print(f[0])
-    (foo, bar) = (f[1], f[2])
-    for i in range(len(foo)):
-        print(foo[i], bar[i])
-    print("")
-
-
-
+# Define network
 
 v1 = FixedVariable(names = ['Person'], values=['Erwin', 'Wouter'], value_row_table=[[]], prob_table=[[0.5, 0.5]])
 
@@ -48,51 +27,69 @@ v4 = HyperpriorVariable(names = ["Coin Outcome", "Fairness", "Brightness", "Pers
                  parentValues = [v2.values, v3.values, v1.values])
 
 
-#full_factor = VE( [v1, v2, v3, v4], v4.names, [])
+# Methods for creating agent title in plot
+use_sampling = False
+use_weighting = False
 
-#printFactor(full_factor)
+# Define network for agents
+model = [v1, v2, v3, v4]
+hypo = [v1]
+pred = [v4]
 
-#factor = VE([v1,v2,v3,v4], ["Coin Outcome"], [])
-#printFactor(factor)
+# Parameters for sampling
+nr_hypo_samples = 10
+nr_samples = 100
 
-#(full_factor, small_factor) = getPredictionTables( [v1, v2, v3, v4], ["Coin Outcome"], [])
+# Make agent
+if use_sampling:
+	if use_weighting:
+		a = SamplingAgent(model, hypo, pred, nr_hypo_samples, nr_samples, use_weighting=True)
+	else:
+		a = SamplingAgent(model, hypo, pred, nr_hypo_samples, nr_samples, use_weighting=False)
+else:
+	if use_weighting:
+		a = DeterministicAgent(model, hypo, pred, use_weighting=True)
+	else:
+		a = DeterministicAgent(model, hypo, pred, use_weighting=False)
 
-#printFactor(full_factor)
-#printFactor(small_factor)
-
-#rejectionSampling([v1, v2, v3, v4], ["Coin Outcome"], [], 1000, bias=0.1)
-
-
-a = DeterministicAgent([v1,v2,v3,v4], [v1], [v4], use_weighting=False)
 
 err = []
-epochs = 20
-for i in range(epochs):
+epochs = 250
+for i in tqdm(range(epochs)):
 
 	(full_table, small_table, hypothesis) = a.makePrediction(["Coin Outcome"], ["Heads"], [])
-
-	#printFactor(full_table)
-	#printFactor(small_table)
 
 	if (i % 2 == 0):
 		observation = [1.0, 0.0]
 	else:
 		observation = [1.0, 0.0]
 
+	# Calculate and save prediction error
 	prediction_error = KLD(observation, small_table[2])
 	err.append(prediction_error)
 
 	for value_row, prob_row in zip(full_table[1], full_table[2]):
-
 		update = [prob_row * obs for obs in observation]
-
 		a.updateModel("Coin Outcome", value_row[1:], update, prediction_error)
 
-	print ""
+
+# Plot Figure
 
 x = [i for i in range(epochs)]
 
 plt.figure()
+
+if use_sampling:
+	if use_weighting:
+		plt.title("Sampling with weighting")
+	else:
+		plt.title("Sampling without weighting")
+else:
+	if use_weighting:
+		plt.title("Normative with weighting")
+	else:
+		plt.title("Normative without weighting")
+
 plt.plot(x, err)
 plt.show()
 

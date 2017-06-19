@@ -177,7 +177,7 @@ def VE (variables, query, evidence=[]):
 
     # Perform normalization
     sum_probs = sum(factor[2])
-    factor = (factor[0], factor[1], [prob/sum_probs for prob in factor[2]])
+    factor = [factor[0], factor[1], [prob/sum_probs for prob in factor[2]]]
 
     return factor
         
