@@ -143,9 +143,9 @@ def makeLayerNetwork(layers):
             # if there is a previous layer:
             if previous > 0:
                 for parent in network[-previous:]:
-                    # extend the current node's names with the parents' names
+                    # Add the parents' names to the current node's names
                     names.append(parent.names[0])
-                    # extend the current node's parent values with the parents' values
+                    # Add the parents' values to the current node's parentValues
                     parentValues.append(parent.values) 
                     
             node = Variable(names=names, values=values, parentValues=parentValues)
@@ -155,9 +155,12 @@ def makeLayerNetwork(layers):
         for node in current_layer:
             network.append(node)
             if previous == 0:
+                # node is a hypothesis node
                 hypothesis.append(node)
             elif i == len(layers)-1:
+                # node is a prediction node
                 prediction.append(node)
+                
     return network, hypothesis, prediction
     
 def makeWorldNetwork(network, hypothesis, prediction):
@@ -182,9 +185,11 @@ def makeWorldNetwork(network, hypothesis, prediction):
             # add the unobserved node's name and values to the names and parentValues
             names.append(unobserved.names[0])
             parentValues.append(unobserved.values)
+            new_var = Variable(names=names, values=values, parentValues = parentValues)
+        else:
+            new_var = var
             
-        # make the node and add it to the world model
-        new_var = Variable(names=names, values=values, parentValues = parentValues)
+        # add node to the world model
         world.append(new_var)
         
         if var in prediction:
@@ -193,9 +198,8 @@ def makeWorldNetwork(network, hypothesis, prediction):
             world_hypothesis.append(new_var)
     return world, world_hypothesis, world_prediction, unobserved 
     
-myTree, hypotheses, predictions = makeTreeNetwork(4)#makeLayerNetwork([2,3,4,2])
-print len(myTree)
+myTree, hypotheses, predictions = makeTreeNetwork(8)
 world, world_hypotheses, world_predictions, unobserved = makeWorldNetwork(myTree, hypotheses, predictions)
-print len(world)
-factor = VE(world, [world_predictions[-1].names[0]], evidence=[])
+
+factor = VE(world, [world_predictions[0].names[0]], evidence=[])
 printFactor(factor)
