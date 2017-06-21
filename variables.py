@@ -91,6 +91,9 @@ class HyperPrior():
 	def updateParams(self, updates):
 		self.params = [x + y for x, y in zip(self.params, updates)]
 
+	# Simple reset function
+	def reset(self):
+		self.params = [1.0 for _ in self.params]
 
 
 ########################################################################################################
@@ -300,6 +303,10 @@ class HyperpriorVariable(Variable):
 		
 		hyperprior = self.value_rows[key]
 		hyperprior.updateParams(values)
+		
+	def reset(self):
+		for hyperprior in self.value_rows.values():
+			hyperprior.reset()
 
 
 
