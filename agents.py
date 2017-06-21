@@ -56,7 +56,7 @@ class DeterministicAgent():
 			observation = [obs * prediction_error for obs in observation]
 
 		for var in self.predictionNodes:
-			if var.names[0] == query:
+			if var.names[0] == query[0]:
 				var.updateHyperprior(observation, parents)
 
 
@@ -109,7 +109,7 @@ class SamplingAgent():
 			#print(hypo)
 
 			# Get prediction over query
-			(full_table, small_table) = sampler.rejectionSampling(self.model, query, evidence, self.nr_samples)
+			(full_table, small_table) = sampler.rejectionSampling(self.model, query, evidence + hypo, self.nr_samples)
 			
 			#print(small_table)
 			
@@ -135,7 +135,7 @@ class SamplingAgent():
 			observation = [obs * prediction_error for obs in observation]
 
 		for var in self.predictionNodes:
-			if var.names[0] == query:
+			if var.names[0] == query[0]:
 				var.updateHyperprior(observation, parents)
 
 

@@ -26,14 +26,16 @@ DONE:
 - Random (rejection) sampling approach to networks.                                                         Erwin
 - Figure out how to update hyperpriors (weighted influence) for sampling                                    Erwin
 
+- Write world-model based on agent model																	Wouter
+- Write non-sampling experiment																				Erwin
+- Write sampling experiment																					Erwin
+
+- Reworked sampling to include topological sort																Erwin
 
 TODO:
 
-- Write world-model based on agent model																	Wouter
-- Write non-sampling experiment																				Erwin
-- Write sampling experiment																					Later
-
-
+- Incorporate everything together																			-
+- Write report																								-
 
 
 MAYBE:
