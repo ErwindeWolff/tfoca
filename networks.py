@@ -40,14 +40,17 @@ def makeChildren(network, parents, depth, tree_depth, num_children, current_widt
             for parent in parents:
                 parentValues.append(parent.values)
                 names.append(parent.names[0])
-                
-            # Make current child node and add to the network
-            node = Variable(names=names, values=values, parentValues=parentValues)
-            network.append(node)
-            
-            # Add the current node's index to prediction nodes indices if it is a prediction node
+                 
+            # Add the current node to prediction nodes if it is a prediction node
             if depth+1==tree_depth:
-                prediction.append(node)
+                 #Make current child node...
+                 node = HyperpriorVariable(names=names, values=values, parentValues=parentValues)
+                 prediction.append(node)
+            else:
+                 #Make current child node...
+                node = Variable(names=names, values=values, parentValues=parentValues)
+            #and add to the network
+            network.append(node)            
             
             # recursively make children to this node until the tree depth has been reached
             makeChildren(network, [node], depth+1, tree_depth, num_children, pos, prediction)
@@ -75,7 +78,7 @@ def makeFunnelNetwork(funnel_depth, num_parents = 2):
             parentValues.append(parent.values)
             names.append(parent.names[0])
             
-    node = Variable(names=names, values=values, parentValues=parentValues)
+    node = HyperpriorVariable(names=names, values=values, parentValues=parentValues)
     network.append(node)
     
     prediction.append(node)
@@ -147,8 +150,11 @@ def makeLayerNetwork(layers):
                     names.append(parent.names[0])
                     # Add the parents' values to the current node's parentValues
                     parentValues.append(parent.values) 
-                    
-            node = Variable(names=names, values=values, parentValues=parentValues)
+            
+            if i > len(layers)-1:
+                node = HyperpriorVariable(names=names, values=values, parentValues=parentValues)
+            else:
+                node = Variable(names=names, values=values, parentValues=parentValues)
             current_layer.append(node)
             
         # Add all nodes in the current layer to the network, and if necessary to hypothesis or prediction
@@ -185,7 +191,7 @@ def makeWorldNetwork(network, hypothesis, prediction):
             # add the unobserved node's name and values to the names and parentValues
             names.append(unobserved.names[0])
             parentValues.append(unobserved.values)
-            new_var = Variable(names=names, values=values, parentValues = parentValues)
+            new_var = HyperpriorVariable(names=names, values=values, parentValues = parentValues)
         else:
             new_var = var
             
