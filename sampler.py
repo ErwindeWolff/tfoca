@@ -199,7 +199,7 @@ def sampleVariables(variables, query, extended_query, evidence):
 			parentValues.append(sampled_values[parent])
 			
 		# Get correct values given sampled values so far
-		table = var.getProbabilities(parentValues)
+		table = var.getProbabilities(parentValues, sampling=True)
 		
 		# Sample over this table
 		sampled_value = sampleVariable(table)

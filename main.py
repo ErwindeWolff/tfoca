@@ -34,11 +34,11 @@ goal = ['True']
 
 # Methods for creating agent title in plot
 use_sampling = True
-use_weighting = False
+use_weighting = True
 
 # Parameters for sampling
 nr_hypo_samples = 10
-nr_samples = 1000
+nr_samples = 10
 
 # Make agent
 if use_sampling:

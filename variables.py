@@ -94,6 +94,23 @@ class HyperPrior():
 	# Simple reset function
 	def reset(self):
 		self.params = [1.0 for _ in self.params]
+		
+	def getSampledProbabilities(self):
+	
+		choice = r.random()
+		
+		sum_probs = 0
+		for i in range(0, 100):
+		
+			chance = (i*1.0)/100
+			
+			prob = 1.0
+			for param in self.params:
+				prob = prob * (chance**param)
+			
+			if (choice 
+		
+	
 
 
 ########################################################################################################
@@ -132,7 +149,7 @@ class FixedVariable():
 
 	# Return probabilities given parentValues
 	# Parent values is empty by default for variables without parents
-	def getProbabilities(self, parentValues = []):
+	def getProbabilities(self, parentValues = [], sampling=False):
 
 		# Find table at proper key
 		key = "_"
@@ -226,7 +243,7 @@ class Variable():
 
 	# Return probabilities given parentValues
 	# Parent values is empty by default for variables without parents
-	def getProbabilities(self, parentValues = []):
+	def getProbabilities(self, parentValues = [], sampling=False):
 
 		# Find table at proper key
 		key = "_"
@@ -297,6 +314,24 @@ class HyperpriorVariable(Variable):
 			for value in parentValues[pointer]:
 				row_values[pointer] = value
 				self.createPriors(values, parentValues, row_values, pointer - 1)
+
+
+	# Return probabilities given parentValues
+	# Parent values is empty by default for variables without parents
+	def getProbabilities(self, parentValues = [], sampling=False):
+
+		# Find table at proper key
+		key = "_"
+		for value in parentValues:
+			key += value + "_"
+
+		table = self.value_rows[key]
+		
+		if sampling:		
+			return table.getSampledProbabilities()
+		else:
+			return table.getProbabilities()
+
 
 	# Update specific hyperprior
 	def updateHyperprior(self, values, key=[]):
