@@ -96,7 +96,7 @@ def VariablesToGraph(variables):
 # CODE FOR REJECTION SAMPLING #
 ###############################		
 
-def rejectionSampling(variables, query, evidence, nr_samples, bias = 0.1):
+def rejectionSampling(variables, query, evidence, nr_samples, bias = 0.0001):
 	
 	# Create table to read probabilities from
 	small_table = []
@@ -200,6 +200,8 @@ def sampleVariables(variables, query, extended_query, evidence):
 			
 		# Get correct values given sampled values so far
 		table = var.getProbabilities(parentValues, sampling=True)
+		
+		#print("TABLE", table)
 		
 		# Sample over this table
 		sampled_value = sampleVariable(table)

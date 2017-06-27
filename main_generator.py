@@ -108,7 +108,7 @@ def runAllCombinations(name, model, hypo, pred, query, goal, epochs, nr_samples,
 
 
 # Save name
-name = "coinflip_test2"
+name = "coinflip_test3"
 #name = "babybot"
 
 # Define network
@@ -119,8 +119,8 @@ model = network.model
 hypo = network.hypothesisNodes
 pred = network.predictionNodes
 
-query = ["Coin Outcome"]
-goal = ["Heads"]
+query = network.query
+goal = network.goal
 
 #query = ["Mobile_movement"]
 #goal = ['True']
@@ -130,7 +130,7 @@ epochs = 250
 
 # Parameters for sampling
 nr_hypo_samples = [1, 10, 100]
-nr_samples = [10, 100]
+nr_samples = [1, 10, 100, 1000]
 
 runAllCombinations(name, model, hypo, pred, query, goal, epochs, nr_samples, nr_hypo_samples)
 

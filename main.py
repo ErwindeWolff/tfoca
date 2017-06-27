@@ -38,7 +38,7 @@ use_weighting = True
 
 # Parameters for sampling
 nr_hypo_samples = 10
-nr_samples = 10
+nr_samples = 1
 
 # Make agent
 if use_sampling:

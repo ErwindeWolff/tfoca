@@ -9,6 +9,9 @@ class CoinflipModel():
 	
 		self.createModel()
 		
+		self.query = ['Coin Outcome']
+		self.goal = ['Heads']
+		
 	def createModel(self):
 	
 		v1 = FixedVariable(names = ['Person'], values=['Erwin', 'Wouter'], 
