@@ -6,11 +6,14 @@ class CoinflipModel():
 		self.model = []
 		self.hypothesisNodes = []
 		self.predictionNodes = []
+		self.world = [] 
 	
 		self.createModel()
+		self.createWorld()
 		
 		self.query = ['Coin Outcome']
 		self.goal = ['Heads']
+		
 		
 	def createModel(self):
 	
@@ -26,3 +29,18 @@ class CoinflipModel():
 		self.model = [v1, v2, v3, v4]
 		self.hypothesisNodes = [v1]
 		self.predictionNodes = [v4]
+		
+		
+	def createWorld(self):
+	
+		context = Variable(names = ["Context"], 
+							values=["True","False"], parentValues=[])
+		self.world.append(context)
+	
+		for var in self.model:
+			if var not in self.predictionNodes:
+				self.world.append(var)
+			else:
+				new_var = Variable(names = var.names + ['Context'], values=var.values,
+									parentValues=var.parentValues + [context.values])
+				self.world.append(new_var)

@@ -12,11 +12,20 @@ import matplotlib.pyplot as plt
 from babybot import *
 from coinflip import *
 
+from random import shuffle
 
 
 
-def runSimulation(name, model, hypo, pred, query, goal, 
-				epochs, nr_samples, nr_hypo_samples, use_sampling, use_weighting):
+
+def runSimulation(name, network, context, epochs, nr_samples, nr_hypo_samples, use_sampling, use_weighting):
+				
+	# Unpack variables from network
+	model = network.model
+	hypo = network.hypothesisNodes
+	pred = network.predictionNodes
+	world = network.world
+	query = network.query
+	goal = network.goal
 		
 	# Reset hyperpriors		
 	for var in pred:
@@ -35,14 +44,18 @@ def runSimulation(name, model, hypo, pred, query, goal,
 			a = DeterministicAgent(model, hypo, pred, use_weighting=False)
 
 	err = []
-	for i in tqdm(range(epochs)):
+	for influence in tqdm(context):
+	
+		evidence = []
+		
+		evidence = evidence + [("Context", influence)]
 
-		(full_table, small_table, hypothesis) = a.makePrediction(query, goal, [])
+		# Let agent make prediction
+		(full_table, small_table, hypothesis) = a.makePrediction(query, goal, evidence)
 
-		if (i % 2 == 0):
-			observation = [1.0, 0.0]
-		else:
-			observation = [1.0, 0.0]
+		# Get observation from world (1 sample)
+		(_, observation) = rejectionSampling(world, query, evidence + hypothesis, 1, bias=0.0)
+		observation = observation[2]
 			
 		# Calculate and save prediction error
 		prediction_error = KLD(observation, small_table[2])
@@ -59,13 +72,12 @@ def runSimulation(name, model, hypo, pred, query, goal,
 			update = [ob * prob_row for ob in observation]
 			a.updateModel(query, value_row, update, prediction_error)
 
-
 	# Plot Figure
 	x = [i for i in range(epochs)]
 
 	plt.figure()
 	plt.plot(x, err)
-	plt.axis([-2, epochs+2, -0.01, 1.01])
+	plt.axis([-2, epochs+2, -0.01, 2.51])
 
 	if not os.path.isdir("Results/{0}".format(name)):
 		os.makedirs("Results/{0}".format(name))
@@ -88,51 +100,46 @@ def runSimulation(name, model, hypo, pred, query, goal,
 	plt.close()
 
 
-def runAllCombinations(name, model, hypo, pred, query, goal, epochs, nr_samples, nr_hypo_samples):
+def runAllCombinations(name, network, context, epochs, nr_samples, nr_hypo_samples):
 
 	for samples in nr_samples:
 		for hypotheses in nr_hypo_samples:
 
-			runSimulation(name, model, hypo, pred, query, goal,
+			runSimulation(name, network, context,
 							epochs, samples, hypotheses, True, True)
 							
-			runSimulation(name, model, hypo, pred, query, goal,
+			runSimulation(name, network, context,
 							epochs, samples, hypotheses, True, False)
 						
-	runSimulation(name, model, hypo, pred, query, goal,
+	runSimulation(name, network, context,
 							epochs, 0, 0, False, True)
 							
-	runSimulation(name, model, hypo, pred, query, goal,
+	runSimulation(name, network, context,
 							epochs, 0, 0, False, False)
 
 
 
 # Save name
-name = "coinflip_test3"
+name = "coinflip_with_world_sorted"
 #name = "babybot"
 
 # Define network
 network = CoinflipModel()
 #network = BabybotModel()
 
-model = network.model
-hypo = network.hypothesisNodes
-pred = network.predictionNodes
-
-query = network.query
-goal = network.goal
-
-#query = ["Mobile_movement"]
-#goal = ['True']
-
 # Set numbers of epochs
 epochs = 250
 
-# Parameters for sampling
-nr_hypo_samples = [1, 10, 100]
-nr_samples = [1, 10, 100, 1000]
+# Define context: First is homogenous, second is sorted, third is shuffled
+#context = [x for i in range(int(epochs/2)) for x in ['True', 'False']]
+context = [x for x in ["True", "False"] for i in range(int(epochs/2))]
+shuffle(context)
 
-runAllCombinations(name, model, hypo, pred, query, goal, epochs, nr_samples, nr_hypo_samples)
+# Parameters for sampling
+nr_hypo_samples = [5, 10, 100]
+nr_samples = [5, 10, 100, 1000]
+
+runAllCombinations(name, network, context, epochs, nr_samples, nr_hypo_samples)
 
 
 

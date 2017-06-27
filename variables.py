@@ -258,11 +258,11 @@ class Variable():
 	def __init__(self, names, values = ["True", "False"], parentValues = [], diff = 0):
 		self.names = names
 		self.values = values
+		self.parentValues = parentValues
 
 		self.diff = diff
 
 		self.value_rows = dict()
-
 		self.createValues(values, parentValues, [0 for _ in range(len(parentValues))], len(parentValues)-1)
 
 
@@ -347,6 +347,7 @@ class HyperpriorVariable(Variable):
 	def __init__(self, names, values = ["True", "False"], parentValues = []):
 		self.names = names
 		self.values = values
+		self.parentValues = parentValues
 		
 		self.value_rows = dict()
 
