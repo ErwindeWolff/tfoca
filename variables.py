@@ -62,14 +62,15 @@ class RandomTable():
 class HyperPrior():
 
 	# General Constructor for labelled values. Default value is True, False
-	def __init__(self, values):
+	def __init__(self, values, steps):
 		self.values = values
 
 		# Create baseline for all values
 		self.params = list()
 		for param in range(len(values)):
 			self.params.append(1.0)
-			
+
+		self.steps = steps			
 		self.distribution = list()
 		self.probabilities = list()
 
@@ -101,7 +102,7 @@ class HyperPrior():
 	def createDistribution(self):
 
 		# Create values recursively
-		self.createDistributionRecur(self.distribution, self.probabilities, [], 0, steps=100)
+		self.createDistributionRecur(self.distribution, self.probabilities, [], 0, self.steps)
 
 		# Normalize to make AUC equal 1.0
 		sum_probs = sum([p * (1.0/len(self.probabilities)) for p in self.probabilities])
@@ -156,6 +157,7 @@ class HyperPrior():
 	
 	# Function to update a hyperprior with new observations
 	def updateDistribution(self, update):
+	
 		new_probabilities = list()
 		for dist, prob in zip(self.distribution, self.probabilities):
 			new_prob = prob
@@ -344,17 +346,17 @@ class Variable():
 class HyperpriorVariable(Variable):
 
 	 # Save names and create probability table
-	def __init__(self, names, values = ["True", "False"], parentValues = []):
+	def __init__(self, names, values = ["True", "False"], parentValues = [], steps=100):
 		self.names = names
 		self.values = values
 		self.parentValues = parentValues
 		
 		self.value_rows = dict()
 
-		self.createPriors(values, parentValues, [parent[0] for parent in parentValues], len(parentValues)-1)
+		self.createPriors(values, parentValues, [parent[0] for parent in parentValues], len(parentValues)-1, steps)
 
 	# Recursively creates hyperpriors for the variable  
-	def createPriors(self, values, parentValues, row_values, pointer):
+	def createPriors(self, values, parentValues, row_values, pointer, steps):
 
 		# Basecase: traversed (backwards) through parentvalues
 		# Create a new hyperprior for this combination
@@ -368,7 +370,7 @@ class HyperpriorVariable(Variable):
 				key += value + "_"
 
 			# Create this row
-			self.value_rows[key] = HyperPrior(values)
+			self.value_rows[key] = HyperPrior(values, steps)
 
 		# Not all parents have an assigned value yet,
 		# recursively iterate to the next parents for all
@@ -377,7 +379,7 @@ class HyperpriorVariable(Variable):
 		else:
 			for value in parentValues[pointer]:
 				row_values[pointer] = value
-				self.createPriors(values, parentValues, row_values, pointer - 1)
+				self.createPriors(values, parentValues, row_values, pointer - 1, steps)
 
 
 	# Return probabilities given parentValues

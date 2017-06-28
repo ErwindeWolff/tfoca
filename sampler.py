@@ -139,7 +139,7 @@ def rejectionSampling(variables, query, evidence, nr_samples, bias = 0.0001):
 	# Perform samples
 	count = 0
 	attempts = 0
-	while (count < nr_samples and attempts < 1000*nr_samples):
+	while (count < nr_samples):
 	
 	#for i in range(nr_samples):
 		
@@ -163,8 +163,6 @@ def rejectionSampling(variables, query, evidence, nr_samples, bias = 0.0001):
 			
 			# Indicate that a sample has been succesful
 			count += 1
-	
-	#print("{0} samples rejected".format(attempts-count))
 	
 	# Normalize probabilities small table
 	sum_counts = sum(small_table[2])
@@ -191,8 +189,6 @@ def sampleVariables(variables, query, extended_query, evidence):
 	# Can go in this order because variables are ordered
 	for var in variables:
 		
-		#print(var.names[0])
-		
 		# Create parent values from already sampled values
 		parentValues = []
 		for parent in var.names[1:]:
@@ -200,8 +196,6 @@ def sampleVariables(variables, query, extended_query, evidence):
 			
 		# Get correct values given sampled values so far
 		table = var.getProbabilities(parentValues, sampling=True)
-		
-		#print("TABLE", table)
 		
 		# Sample over this table
 		sampled_value = sampleVariable(table)

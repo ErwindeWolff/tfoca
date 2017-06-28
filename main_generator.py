@@ -11,10 +11,27 @@ import matplotlib.pyplot as plt
 # Specific Model imports
 from babybot import *
 from coinflip import *
+from die import *
 
-from random import shuffle
+from random import *
 
 
+
+def getEvidence(model, hypo, pred, chance=0.1):
+
+	evidence = list()
+
+	variables = list()
+	for var in model:
+		if (var not in hypo) and (var not in pred):
+			variables.append(var)
+			
+	for var in variables:
+		if random() <= chance:
+			value = var.values[randint(0, len(var.values)-1)]
+			evidence.append( (var.names[0], value) ) 
+			
+	return evidence
 
 
 def runSimulation(name, network, context, epochs, nr_samples, nr_hypo_samples, use_sampling, use_weighting):
@@ -27,7 +44,7 @@ def runSimulation(name, network, context, epochs, nr_samples, nr_hypo_samples, u
 	query = network.query
 	goal = network.goal
 		
-	# Reset hyperpriors		
+	# Reset hyperpriors (allows multiple subsequent runs)
 	for var in pred:
 		var.reset()
 				
@@ -46,8 +63,8 @@ def runSimulation(name, network, context, epochs, nr_samples, nr_hypo_samples, u
 	err = []
 	for influence in tqdm(context):
 	
-		evidence = []
-		
+		# Gather evidence for observation
+		evidence = getEvidence(model, hypo, pred, chance=0.1)
 		evidence = evidence + [("Context", influence)]
 
 		# Let agent make prediction
@@ -61,23 +78,30 @@ def runSimulation(name, network, context, epochs, nr_samples, nr_hypo_samples, u
 		prediction_error = KLD(observation, small_table[2])
 		err.append(prediction_error)
 
+		# Update all hyperpriors
 		for value_row, prob_row in zip(full_table[1], full_table[2]):
 		
+			# Create key
 			if (type(value_row) is list):
 				key = "_"
 				for v in value_row[1:]:
 					key += v + "_"
 				value_row = key
 		
+			# Multiply observation with probability they influenced
 			update = [ob * prob_row for ob in observation]
 			a.updateModel(query, value_row, update, prediction_error)
 
-	# Plot Figure
-	x = [i for i in range(epochs)]
+	return err
+
+
+
+
+def saveImage(name, x, y, nr_hypo_samples, nr_samples, use_sampling, use_weighting):
 
 	plt.figure()
-	plt.plot(x, err)
-	plt.axis([-2, epochs+2, -0.01, 2.51])
+	plt.axis([-2, epochs+2, -0.01, 15.51])
+	plt.plot(x, y)
 
 	if not os.path.isdir("Results/{0}".format(name)):
 		os.makedirs("Results/{0}".format(name))
@@ -100,44 +124,74 @@ def runSimulation(name, network, context, epochs, nr_samples, nr_hypo_samples, u
 	plt.close()
 
 
+
+
+'''
+	Function to run multiple simulations and plot them all
+'''
 def runAllCombinations(name, network, context, epochs, nr_samples, nr_hypo_samples):
+
+	# Plot Figure
+	x = [i for i in range(epochs)]
 
 	for samples in nr_samples:
 		for hypotheses in nr_hypo_samples:
 
-			runSimulation(name, network, context,
+			err = runSimulation(name, network, context,
 							epochs, samples, hypotheses, True, True)
 							
-			runSimulation(name, network, context,
+			saveImage(name, x, err, hypotheses, samples, True, True)
+
+
+			err = runSimulation(name, network, context,
 							epochs, samples, hypotheses, True, False)
-						
-	runSimulation(name, network, context,
+			saveImage(name, x, err, hypotheses, samples, True, False)
+				
+				
+	err = runSimulation(name, network, context,
 							epochs, 0, 0, False, True)
+	saveImage(name, x, err, hypotheses, samples, False, True)
+	
 							
-	runSimulation(name, network, context,
+	err = runSimulation(name, network, context,
 							epochs, 0, 0, False, False)
+	saveImage(name, x, err, hypotheses, samples, False, False)
 
 
 
 # Save name
-name = "coinflip_with_world_sorted"
+#name = "coinflip_with_world"
 #name = "babybot"
+name = "Dice_test2"
 
 # Define network
-network = CoinflipModel()
+#network = CoinflipModel()
 #network = BabybotModel()
+network = DieModel()
 
 # Set numbers of epochs
-epochs = 250
+epochs = 100
 
-# Define context: First is homogenous, second is sorted, third is shuffled
-#context = [x for i in range(int(epochs/2)) for x in ['True', 'False']]
-context = [x for x in ["True", "False"] for i in range(int(epochs/2))]
-shuffle(context)
+# Set data style
+#style = "homogenous"
+style = "sorted"
+#style = "randomized"
+
+# Define context: 1 is homogenous, 2 is sorted, 3 is randomized
+if (style == "homogenous"):
+	name += "_homogenous"
+	context = network.getContext(epochs, distribution=1)
+elif (style == "sorted"):
+	name += "_sorted"
+	context = network.getContext(epochs, distribution=2)
+else:
+	name += "_randomized"
+	context = network.getContext(epochs, distribution=3)
+
 
 # Parameters for sampling
 nr_hypo_samples = [5, 10, 100]
-nr_samples = [5, 10, 100, 1000]
+nr_samples = [5, 10, 100]
 
 runAllCombinations(name, network, context, epochs, nr_samples, nr_hypo_samples)
 

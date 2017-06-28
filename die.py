@@ -1,7 +1,6 @@
 from variables import *
-from random import shuffle
 
-class CoinflipModel():
+class DieModel():
 
 	def __init__(self):
 		self.model = []
@@ -12,24 +11,21 @@ class CoinflipModel():
 		self.createModel()
 		self.createWorld()
 		
-		self.query = ['Coin Outcome']
-		self.goal = ['Heads']
+		self.query = ['Die Outcome']
+		self.goal = ['One']
 		
 		
 	def createModel(self):
 	
-		v1 = FixedVariable(names = ['Person'], values=['Erwin', 'Wouter'], 
-									value_row_table=[[]], prob_table=[[0.5, 0.5]])
-		v2 = FixedVariable(names = ["Fairness", "Person"], values=["Fair", "Unfair"], 
-									value_row_table = [["Erwin"], ["Wouter"]], prob_table = [[0.5,0.5],[0.8,0.2]])
-		v3 = Variable(names = ["Brightness"], values=["Light", "Dark"], parentValues=[])        
-		v4 = HyperpriorVariable(names = ["Coin Outcome", "Fairness", "Brightness", "Person"], 
-									values=["Heads", "Tails"], parentValues = [v2.values, v3.values, v1.values])
+		v1 = FixedVariable(names = ['Hypothesis'], values=['True', 'False'], 
+									value_row_table=[[]], prob_table=[[0.5, 0.5]])       
+		v2 = HyperpriorVariable(names = ["Die Outcome", "Hypothesis"], 
+										values=['One', 'Two'], 											parentValues = [v1.values], steps=100)
 
 		# Define network for agents
-		self.model = [v1, v2, v3, v4]
+		self.model = [v1, v2]
 		self.hypothesisNodes = [v1]
-		self.predictionNodes = [v4]
+		self.predictionNodes = [v2]
 		
 		
 	def createWorld(self):
@@ -60,7 +56,7 @@ class CoinflipModel():
 							
 							real_prob = new_var.value_rows[key].getProbabilities()[1]
 							
-							new_probs = [0.5*real + 0.5*ideal for real, ideal in zip(real_prob, ideal_prob)]
+							new_probs = [0.0*real + 1.0*ideal for real, ideal in zip(real_prob, ideal_prob)]
 							
 							new_var.value_rows[key] = ProbTable(new_var.values, new_probs)
 
@@ -89,9 +85,3 @@ class CoinflipModel():
 			shuffle(context)
 		
 		return context
-		
-		
-		
-				
-				
-				
