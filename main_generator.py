@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 from babybot import *
 from coinflip import *
 from die import *
+from funnel import *
+from funnel import *
 
 from random import *
 
@@ -162,19 +164,21 @@ def runAllCombinations(name, network, context, epochs, nr_samples, nr_hypo_sampl
 # Save name
 #name = "coinflip_with_world"
 #name = "babybot"
-name = "Dice_test2"
+#name = "Dice_test2"
+name = "Tree"
 
 # Define network
 #network = CoinflipModel()
 #network = BabybotModel()
-network = DieModel()
+#network = DieModel()
+network = TreeModel()
 
 # Set numbers of epochs
-epochs = 100
+epochs = 250
 
 # Set data style
-#style = "homogenous"
-style = "sorted"
+style = "homogenous"
+#style = "sorted"
 #style = "randomized"
 
 # Define context: 1 is homogenous, 2 is sorted, 3 is randomized
