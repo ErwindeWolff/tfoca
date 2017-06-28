@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from variables import *
 
-class TreeModel():
+class FunnelModel():
 	def __init__(self, funnel_depth=4, num_parents=2):
 		self.model = []
 		self.hypothesisNodes = []
@@ -11,8 +11,8 @@ class TreeModel():
 		self.makeFunnelNetwork(funnel_depth, num_parents)
 		self.createWorld()
 		
-		self.query = ['Layer_{0}_Node_1'.format(funnel_depth)]
-		self.goal = ['True']
+		self.query = [self.predictionNodes[0].names[0]]
+		self.goal = [self.predictionNodes[0].values[0]]
 		
 	def makeFunnelNetwork(self,funnel_depth, num_parents):
 
@@ -39,7 +39,7 @@ class TreeModel():
 		    
 		self.predictionNodes.append(node)
     
-	def makeParents(self,network, depth, num_parents, current_width):
+	def makeParents(self, depth, num_parents, current_width):
 		current_parents = list()
 		# If the funnel has not reached its maximum depth:
 		if depth > 0:        
@@ -48,7 +48,7 @@ class TreeModel():
 			# for each parent we make for the current child:
 			for pos in cur_positions:
 				# recursively make parents for current node
-				parents = self.makeParents(network, depth-1, num_parents, pos,)
+				parents = self.makeParents( depth-1, num_parents, pos,)
 				names = list()
 				parentValues = list()
 				            

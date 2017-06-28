@@ -11,8 +11,8 @@ class TreeModel():
 		self.makeTreeNetwork(tree_depth, num_children)
 		self.createWorld()
 		
-		self.query = ['Layer_{0}_Node_1'.format(tree_depth)]
-		self.goal = ['True']
+		self.query = [self.predictionNodes[0].names[0]]
+		self.goal = [self.predictionNodes[0].values[0]]
 		
 	def makeTreeNetwork(self, tree_depth, num_children = 2):
 		depth = 0

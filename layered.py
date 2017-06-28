@@ -11,8 +11,8 @@ class LayeredModel():
 		self.makeLayerNetwork(layers)
 		self.createWorld()
 		
-		self.query = ['Layer_{0}_Node_1'.format(len(layers))]
-		self.goal = ['True']
+		self.query = [self.predictionNodes[0].names[0]]
+		self.goal = [self.predictionNodes[0].values[0]]
 	
 	def makeLayerNetwork(self,layers):
 
