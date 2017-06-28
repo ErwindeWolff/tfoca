@@ -7,13 +7,15 @@ from tqdm import *
 
 import os
 import matplotlib.pyplot as plt
+import numpy as np
 
 # Specific Model imports
 from babybot import *
 from coinflip import *
 from die import *
 from funnel import *
-from funnel import *
+from tree import *
+from layered import *
 
 from random import *
 
@@ -34,6 +36,62 @@ def getEvidence(model, hypo, pred, chance=0.1):
 			evidence.append( (var.names[0], value) ) 
 			
 	return evidence
+
+
+
+'''
+	Function to run multiple simulations and plot them all
+'''
+def runAllCombinations(name, network, context, epochs, nr_samples, nr_hypo_samples):
+
+	# Plot Figure
+	x = [i for i in range(len(context))]
+
+	for samples in nr_samples:
+		for hypo_samples in nr_hypo_samples:
+
+			meanStdPlot(name, network, context, epochs, samples, hypo_samples, True, True, runs=10)
+			meanStdPlot(name, network, context, epochs, samples, hypo_samples, True, False, runs=10)
+	
+	meanStdPlot(name, network, context, epochs, samples, hypo_samples, False, True, runs=1)
+	meanStdPlot(name, network, context, epochs, samples, hypo_samples, False, False, runs=1)
+
+
+
+def meanStdPlot(name, network, context, epochs, nr_samples, nr_hypo_samples, use_sampling, use_weighting, runs=10):
+	
+	errs = list()
+	
+	for _ in tqdm(range(runs)):
+		err = runSimulation(name, network, context,
+							epochs, nr_samples, nr_hypo_samples, use_sampling, use_weighting)
+							
+		errs.append(err)
+		
+	mean_err = list()
+	std_err_high = list()
+	std_err_low = list()
+	
+	for i in range(len(errs[0])):
+	
+		column = list()
+		for j in range(len(errs)):
+			column.append(errs[j][i])
+		
+		mean_column = np.asarray(column).mean()
+		std_column = np.asarray(column).std()
+		
+		#print(mean_column, std_column)
+		
+		mean_err.append(mean_column)
+		std_err_high.append(mean_column + 2*std_column)
+		std_err_low.append(mean_column - 2*std_column)
+	
+	x = range(len(context))
+	
+	saveImage(name, x, [std_err_high, std_err_low, mean_err],
+				nr_hypo_samples, nr_samples, use_sampling, use_weighting)
+
 
 
 def runSimulation(name, network, context, epochs, nr_samples, nr_hypo_samples, use_sampling, use_weighting):
@@ -63,7 +121,7 @@ def runSimulation(name, network, context, epochs, nr_samples, nr_hypo_samples, u
 			a = DeterministicAgent(model, hypo, pred, use_weighting=False)
 
 	err = []
-	for influence in tqdm(context):
+	for influence in context:
 	
 		# Gather evidence for observation
 		evidence = getEvidence(model, hypo, pred, chance=0.1)
@@ -98,12 +156,16 @@ def runSimulation(name, network, context, epochs, nr_samples, nr_hypo_samples, u
 
 
 
-
-def saveImage(name, x, y, nr_hypo_samples, nr_samples, use_sampling, use_weighting):
+def saveImage(name, x, ys, nr_hypo_samples, nr_samples, use_sampling, use_weighting):
 
 	plt.figure()
-	plt.axis([-2, epochs+2, -0.01, 15.51])
-	plt.plot(x, y)
+	plt.axis([-2, epochs+2, -0.01, 10.01])
+	
+	for i, y in enumerate(ys):
+		if (i == len(ys)-1):	
+			plt.plot(x, y, color='OrangeRed')
+		else:
+			plt.plot(x, y, color='LightSalmon')
 
 	if not os.path.isdir("Results/{0}".format(name)):
 		os.makedirs("Results/{0}".format(name))
@@ -123,48 +185,19 @@ def saveImage(name, x, y, nr_hypo_samples, nr_samples, use_sampling, use_weighti
 		else:
 			plt.title("Normative without weighting")
 			plt.savefig('Results/{0}/normative_no_weight.png'.format(name))
+	
 	plt.close()
 
 
 
-
 '''
-	Function to run multiple simulations and plot them all
+	DEFINE EXPERIMENTAL VALUES
 '''
-def runAllCombinations(name, network, context, epochs, nr_samples, nr_hypo_samples):
-
-	# Plot Figure
-	x = [i for i in range(epochs)]
-
-	for samples in nr_samples:
-		for hypotheses in nr_hypo_samples:
-
-			err = runSimulation(name, network, context,
-							epochs, samples, hypotheses, True, True)
-							
-			saveImage(name, x, err, hypotheses, samples, True, True)
-
-
-			err = runSimulation(name, network, context,
-							epochs, samples, hypotheses, True, False)
-			saveImage(name, x, err, hypotheses, samples, True, False)
-				
-				
-	err = runSimulation(name, network, context,
-							epochs, 0, 0, False, True)
-	saveImage(name, x, err, hypotheses, samples, False, True)
-	
-							
-	err = runSimulation(name, network, context,
-							epochs, 0, 0, False, False)
-	saveImage(name, x, err, hypotheses, samples, False, False)
-
-
 
 # Save name
 #name = "coinflip_with_world"
 #name = "babybot"
-#name = "Dice_test2"
+#name = "Dice_test"
 name = "Tree"
 
 # Define network
@@ -194,10 +227,10 @@ else:
 
 
 # Parameters for sampling
-nr_hypo_samples = [5, 10, 100]
-nr_samples = [5, 10, 100]
+nr_hypo_samples = [10]
+nr_samples = [2, 8, 32, 128, 512]
 
 runAllCombinations(name, network, context, epochs, nr_samples, nr_hypo_samples)
 
-
+#meanStdPlot(name, network, context, epochs, nr_samples, nr_hypo_samples, True, True, runs=10)
 

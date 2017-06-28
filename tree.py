@@ -23,7 +23,7 @@ class TreeModel():
 		self.hypothesisNodes.append(node)
 		    
 		# Recursively add children to the current uppermost node
-		self.makeChildren([node], depth+1, tree_depth, num_children, 1, prediction) 
+		self.makeChildren([node], depth+1, tree_depth, num_children, 1, self.predictionNodes) 
 		
 
 	def makeChildren(self, parents, depth, tree_depth, num_children, current_width, prediction):
@@ -59,7 +59,7 @@ class TreeModel():
 				self.model.append(node)            
 				            
 				# recursively make children to this node until the tree depth has been reached
-				self.makeChildren([node], depth+1, tree_depth, num_children, pos, prediction)
+				self.makeChildren([node], depth+1, tree_depth, num_children, pos, self.predictionNodes)
 				
 	
 					
