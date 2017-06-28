@@ -53,8 +53,8 @@ def runAllCombinations(name, network, context, epochs, nr_samples, nr_hypo_sampl
 			meanStdPlot(name, network, context, epochs, samples, hypo_samples, True, True, runs=10)
 			meanStdPlot(name, network, context, epochs, samples, hypo_samples, True, False, runs=10)
 	
-	meanStdPlot(name, network, context, epochs, samples, hypo_samples, False, True, runs=1)
-	meanStdPlot(name, network, context, epochs, samples, hypo_samples, False, False, runs=1)
+	#meanStdPlot(name, network, context, epochs, samples, hypo_samples, False, True, runs=1)
+	#meanStdPlot(name, network, context, epochs, samples, hypo_samples, False, False, runs=1)
 
 
 
@@ -161,6 +161,9 @@ def saveImage(name, x, ys, nr_hypo_samples, nr_samples, use_sampling, use_weight
 	plt.figure()
 	plt.axis([-2, epochs+2, -0.01, 10.01])
 	
+	plt.ylabel('Prediction Error (sum {0})'.format( int(100*sum(ys[-1]))/100.0))
+	plt.xlabel('Nr Observations')
+	
 	for i, y in enumerate(ys):
 		if (i == len(ys)-1):	
 			plt.plot(x, y, color='OrangeRed')
@@ -207,7 +210,7 @@ name = "Tree"
 network = TreeModel()
 
 # Set numbers of epochs
-epochs = 250
+epochs = 200
 
 # Set data style
 style = "homogenous"
@@ -231,6 +234,4 @@ nr_hypo_samples = [10]
 nr_samples = [2, 8, 32, 128, 512]
 
 runAllCombinations(name, network, context, epochs, nr_samples, nr_hypo_samples)
-
-#meanStdPlot(name, network, context, epochs, nr_samples, nr_hypo_samples, True, True, runs=10)
 
