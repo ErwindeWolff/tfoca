@@ -1,6 +1,6 @@
 # tfoca
 
-main.py collects results from the parameters found in lines 200 through 235:
+main.py collects results from the parameters found in lines 205 through 240:
 name			Used in saving results to their own folder
 network 		Defines the type of network used
 epochs			Number of observations to be made
