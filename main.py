@@ -2,8 +2,8 @@ from variables import *
 from variableElimination import * 
 from sampler import *
 from agents import *
-from predProc import *
 from tqdm import *
+from math import log
 
 import os
 import matplotlib.pyplot as plt
@@ -19,6 +19,11 @@ from layered import *
 
 from random import *
 
+
+# Returns kullback-leiber divergence between prediction and observed
+# Where in the definition, P = obs ad Q = pred
+def KLD (obs, pred):
+    return sum([x1 * log((x1/x2), 2) for x1, x2 in zip(obs, pred) if x1 != 0.0])
 
 
 def getEvidence(model, hypo, pred, chance=0.1):
