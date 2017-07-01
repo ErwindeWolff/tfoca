@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from variables import *
+from random import shuffle
 
 class TreeModel():
 	def __init__(self, tree_depth=4, num_children=2):

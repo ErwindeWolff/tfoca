@@ -31,13 +31,6 @@ DONE:
 - Write sampling experiment																					Erwin
 
 - Reworked sampling to include topological sort																Erwin
+- Incorporate everything together																			Erwin
+- Write report																								Together
 
-TODO:
-
-- Incorporate everything together																			-
-- Write report																								-
-
-
-MAYBE:
-
-- Network GUI (because time to spare)                                                                       Erwin

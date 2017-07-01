@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from variables import *
+from random import shuffle
 
 class LayeredModel():
 	def __init__(self, layers):

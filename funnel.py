@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from variables import *
+from random import shuffle
 
 class FunnelModel():
 	def __init__(self, funnel_depth=4, num_parents=2):
